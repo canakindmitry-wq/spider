@@ -42,6 +42,26 @@ export function defaultState() {
 
 export let state = defaultState()
 
+let persistHook = null
+
+/** Облачное сохранение Яндекс Игр (Player.setData). */
+export function setPersistHook(fn) {
+  persistHook = fn
+}
+
+function normalizeState(parsed) {
+  const next = { ...defaultState(), ...parsed }
+  next.stats = { ...defaultState().stats, ...(parsed.stats || {}) }
+  if (!Array.isArray(next.hangingPhotos) || next.hangingPhotos.length !== 6) {
+    next.hangingPhotos = [null, null, null, null, null, null]
+  }
+  if (!Array.isArray(next.ownedSkins)) next.ownedSkins = []
+  if (!Array.isArray(next.ownedPhotos)) next.ownedPhotos = []
+  if (!next.roomItems || typeof next.roomItems !== 'object') next.roomItems = {}
+  if (!next.achievements || typeof next.achievements !== 'object') next.achievements = {}
+  return next
+}
+
 export function loadState() {
   try {
     const raw = localStorage.getItem(SAVE_KEY)
@@ -50,15 +70,7 @@ export function loadState() {
       return state
     }
     const parsed = JSON.parse(raw)
-    state = { ...defaultState(), ...parsed }
-    state.stats = { ...defaultState().stats, ...(parsed.stats || {}) }
-    if (!Array.isArray(state.hangingPhotos) || state.hangingPhotos.length !== 6) {
-      state.hangingPhotos = [null, null, null, null, null, null]
-    }
-    if (!Array.isArray(state.ownedSkins)) state.ownedSkins = []
-    if (!Array.isArray(state.ownedPhotos)) state.ownedPhotos = []
-    if (!state.roomItems || typeof state.roomItems !== 'object') state.roomItems = {}
-    if (!state.achievements || typeof state.achievements !== 'object') state.achievements = {}
+    state = normalizeState(parsed)
   } catch {
     state = defaultState()
   }
@@ -71,6 +83,60 @@ export function saveState() {
   } catch {
     /* ignore quota */
   }
+  persistHook?.(state)
+}
+
+/**
+ * Сливаем облачный прогресс: берём сейв с большим totalEarned,
+ * плюс объединяем покупки (скины / отключение рекламы).
+ */
+export function applyRemoteSave(remote) {
+  if (!remote || typeof remote !== 'object') return false
+  const cloud = normalizeState(remote)
+  const remoteEarned = Number(cloud.totalEarned) || 0
+  const localEarned = Number(state.totalEarned) || 0
+
+  if (remoteEarned > localEarned) {
+    const ads = state.adsDisabled || cloud.adsDisabled
+    const skins = [...new Set([...state.ownedSkins, ...cloud.ownedSkins])]
+    const photos = [...new Set([...state.ownedPhotos, ...cloud.ownedPhotos])]
+    state = cloud
+    state.adsDisabled = ads
+    state.ownedSkins = skins
+    state.ownedPhotos = photos
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify(state))
+    } catch {
+      /* ignore */
+    }
+    return true
+  }
+
+  let changed = false
+  if (cloud.adsDisabled && !state.adsDisabled) {
+    state.adsDisabled = true
+    changed = true
+  }
+  for (const id of cloud.ownedSkins) {
+    if (!state.ownedSkins.includes(id)) {
+      state.ownedSkins.push(id)
+      changed = true
+    }
+  }
+  for (const id of cloud.ownedPhotos) {
+    if (!state.ownedPhotos.includes(id)) {
+      state.ownedPhotos.push(id)
+      changed = true
+    }
+  }
+  if (changed) {
+    try {
+      localStorage.setItem(SAVE_KEY, JSON.stringify(state))
+    } catch {
+      /* ignore */
+    }
+  }
+  return changed
 }
 
 export function costume() {

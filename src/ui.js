@@ -39,7 +39,7 @@ import {
 } from './state.js'
 import { sfx, isMuted, setMuted, unlockAudio } from './audio.js'
 import { startPhotoGame, startHeroGame, shootPhoto, abortPhoto, abortHero } from './games.js'
-import { showRewarded, showInterstitial, purchaseProduct } from './yandex.js'
+import { showRewarded, showInterstitial, purchaseProduct, gameplayStart } from './yandex.js'
 
 const $ = (id) => document.getElementById(id)
 
@@ -143,13 +143,16 @@ export function renderRoom() {
   $('hot-tv').classList.toggle('locked', !hasItem('tv'))
   $('tv-badge').classList.toggle('hidden', !canWatchTv())
 
+  const chartObj = $('chart-obj')
+  if (chartObj) chartObj.textContent = hasItem('laptop') ? '💻' : '📊'
+
   $('wall-frames').innerHTML = state.hangingPhotos
     .map((id, i) => {
       const p = PHOTOS.find((x) => x.id === id)
       if (!p) {
-        return `<button type="button" class="frame empty" data-slot="${i}" aria-label="Пустая рамка">+</button>`
+        return `<div class="frame empty" data-slot="${i}" aria-hidden="true">+</div>`
       }
-      return `<button type="button" class="frame filled" data-slot="${i}" aria-label="${p.name}"><span>${p.emoji}</span></button>`
+      return `<div class="frame filled" data-slot="${i}" aria-label="${p.name}"><span>${p.emoji}</span></div>`
     })
     .join('')
 
@@ -712,6 +715,7 @@ export function startFromSplash() {
   renderRoom()
   renderHud()
   gameStarted = true
+  gameplayStart()
   startPassiveTicker()
 
   const { coins, minutes } = collectPassiveCoins()

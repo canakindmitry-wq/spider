@@ -201,6 +201,27 @@ button {
   z-index: 5;
 }
 
+@media (max-width: 420px) {
+  .hud .icon-btn {
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    min-height: 56px;
+    font-size: 22px;
+  }
+
+  .passive-chip {
+    font-size: 13px;
+    padding: 0 8px;
+    min-height: 56px;
+  }
+
+  .coins-chip {
+    font-size: 22px;
+    min-height: 56px;
+  }
+}
+
 .coins-chip,
 .passive-chip {
   min-height: 64px;

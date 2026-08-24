@@ -1,13 +1,24 @@
 /**
  * Обёртка Яндекс Игр SDK.
- * Если SDK недоступен (локальный запуск), показываем заглушку рекламы и тестовые покупки.
+ *
+ * В каталоге (архив на сервере Яндекса) SDK подключается относительным путём /sdk.js.
+ * На своём домене — с https://sdk.games.s3.yandex.net/sdk.js.
+ * Локально SDK не грузим: он сыплет ошибками postMessage без родителя Яндекса.
+ *
+ * Здесь же: облачные сохранения Player.setData, восстановление покупок, таблица лидеров.
  */
 
 import { PREMIUM, PAID_SKINS } from './data.js'
+import { state, saveState, applyRemoteSave, setPersistHook } from './state.js'
+
+export const LEADERBOARD_ID = 'coins'
 
 let ysdk = null
 let payments = null
+let player = null
+let lbApi = null
 let ready = false
+let cloudTimer = 0
 
 export function hasSdk() {
   return Boolean(ysdk)
@@ -15,6 +26,28 @@ export function hasSdk() {
 
 export function adsRemovedFromSdk() {
   return false
+}
+
+function inIframe() {
+  try {
+    return window.self !== window.top
+  } catch {
+    return true
+  }
+}
+
+function shouldLoadSdk() {
+  if (inIframe()) return true
+  return /yandex\.(ru|net)|yango/i.test(location.host)
+}
+
+function sdkUrls() {
+  const urls = []
+  if (/yandex|yango/i.test(location.host) || inIframe()) {
+    urls.push('/sdk.js')
+    urls.push('https://sdk.games.s3.yandex.net/sdk.js')
+  }
+  return urls
 }
 
 function loadScript(src) {
@@ -74,14 +107,53 @@ function showFakeAd(title = 'Реклама') {
   })
 }
 
-/** SDK нужен только внутри iframe Яндекс Игр. Локально он сыплет ошибками postMessage. */
-function shouldLoadSdk() {
-  try {
-    if (window.self !== window.top) return true
-  } catch {
+function grantProduct(productId) {
+  if (!productId) return false
+  if (productId === PREMIUM.disableAds.productId) {
+    state.adsDisabled = true
     return true
   }
-  return /yandex\.(ru|net)/i.test(location.host)
+  const skin = PAID_SKINS.find((s) => s.productId === productId)
+  if (skin && !state.ownedSkins.includes(skin.id)) {
+    state.ownedSkins.push(skin.id)
+    return true
+  }
+  return false
+}
+
+function productIdOf(purchase) {
+  return purchase?.productID || purchase?.productId || purchase?.id || ''
+}
+
+async function pushCloud(flush) {
+  if (!player?.setData) return
+  try {
+    await player.setData({ save: state }, Boolean(flush))
+  } catch {
+    /* лимит / гость */
+  }
+}
+
+function scheduleCloudSave() {
+  clearTimeout(cloudTimer)
+  cloudTimer = setTimeout(() => {
+    pushCloud(false)
+    submitLeaderboard()
+  }, 1200)
+}
+
+export async function submitLeaderboard() {
+  if (!ysdk) return
+  const score = Math.floor(state.totalEarned || 0)
+  if (score <= 0) return
+  try {
+    if (!lbApi) {
+      lbApi = await ysdk.getLeaderboards()
+    }
+    await lbApi.setLeaderboardScore(LEADERBOARD_ID, score)
+  } catch {
+    /* таблица может быть не создана в консоли */
+  }
 }
 
 export async function initYandex() {
@@ -89,29 +161,81 @@ export async function initYandex() {
     ready = true
     return null
   }
-  try {
-    await loadScript('https://yandex.ru/games/sdk/v2')
-    if (typeof window.YaGames === 'undefined') throw new Error('no YaGames')
-    ysdk = await window.YaGames.init()
+
+  const urls = sdkUrls()
+  let loaded = false
+  for (const url of urls) {
     try {
-      payments = await ysdk.getPayments({ signed: true })
+      await loadScript(url)
+      if (window.YaGames) {
+        loaded = true
+        break
+      }
     } catch {
-      payments = null
+      /* пробуем следующий адрес */
     }
-    ready = true
-    try {
-      const p = ysdk.features?.LoadingAPI?.ready()
-      if (p && typeof p.catch === 'function') p.catch(() => {})
-    } catch {
-      /* ignore */
-    }
-    return ysdk
-  } catch {
-    ysdk = null
-    payments = null
+  }
+  if (!loaded || typeof window.YaGames === 'undefined') {
     ready = true
     return null
   }
+
+  try {
+    ysdk = await window.YaGames.init()
+  } catch {
+    ysdk = null
+    ready = true
+    return null
+  }
+
+  try {
+    payments = await ysdk.getPayments()
+  } catch {
+    try {
+      payments = await ysdk.getPayments({ signed: false })
+    } catch {
+      payments = null
+    }
+  }
+
+  try {
+    player = await ysdk.getPlayer()
+    const remote = await player.getData()
+    if (remote?.save) applyRemoteSave(remote.save)
+  } catch {
+    player = null
+  }
+
+  await restorePurchases()
+  setPersistHook(() => scheduleCloudSave())
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      clearTimeout(cloudTimer)
+      pushCloud(true)
+      gameplayStop()
+    } else {
+      gameplayStart()
+    }
+  })
+
+  try {
+    ysdk.on?.('game_api_pause', () => gameplayStop())
+    ysdk.on?.('game_api_resume', () => gameplayStart())
+  } catch {
+    /* старый SDK */
+  }
+
+  ready = true
+  try {
+    const p = ysdk.features?.LoadingAPI?.ready()
+    if (p && typeof p.catch === 'function') p.catch(() => {})
+  } catch {
+    /* ignore */
+  }
+
+  submitLeaderboard()
+  return ysdk
 }
 
 export function gameplayStart() {
@@ -135,6 +259,7 @@ export function gameplayStop() {
 /** Interstitial между сменами. Не блокирует игру, если не показалась. */
 export async function showInterstitial() {
   if (!ysdk) return
+  gameplayStop()
   try {
     await new Promise((resolve) => {
       ysdk.adv.showFullscreenAdv({
@@ -147,6 +272,7 @@ export async function showInterstitial() {
   } catch {
     /* ignore */
   }
+  gameplayStart()
 }
 
 /**
@@ -154,7 +280,8 @@ export async function showInterstitial() {
  */
 export async function showRewarded(placement = 'double') {
   if (ysdk) {
-    return new Promise((resolve) => {
+    gameplayStop()
+    const ok = await new Promise((resolve) => {
       let rewarded = false
       try {
         ysdk.adv.showRewardedVideo({
@@ -171,6 +298,8 @@ export async function showRewarded(placement = 'double') {
         resolve(false)
       }
     })
+    gameplayStart()
+    return ok
   }
   const titles = {
     double: 'Реклама: удвоение',
@@ -183,12 +312,14 @@ export async function showRewarded(placement = 'double') {
 export async function purchaseProduct(productId) {
   if (payments) {
     try {
-      const purchase = await payments.purchase({ id: productId })
+      let purchase
       try {
-        await payments.consumePurchase(purchase.purchaseToken)
+        purchase = await payments.purchase({ id: productId })
       } catch {
-        /* некоторые продукты не consume */
+        purchase = await payments.purchase(productId)
       }
+      grantProduct(productIdOf(purchase) || productId)
+      saveState()
       return true
     } catch {
       return false
@@ -212,6 +343,11 @@ export async function restorePurchases() {
   if (!payments) return []
   try {
     const list = await payments.getPurchases()
+    let changed = false
+    for (const p of list || []) {
+      if (grantProduct(productIdOf(p))) changed = true
+    }
+    if (changed) saveState()
     return list || []
   } catch {
     return []

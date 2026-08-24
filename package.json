@@ -6,9 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "zip": "vite build && python3 -c \"import shutil; shutil.make_archive('spiderman-tycoon', 'zip', 'dist')\""
   },
   "devDependencies": {
     "vite": "^8.2.2"
+  },
+  "dependencies": {
+    "@fontsource/nunito": "^5.3.0"
   }
 }
