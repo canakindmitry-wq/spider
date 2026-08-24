@@ -167,7 +167,7 @@ export function fitIsoRoom() {
   void iso.offsetWidth
 
   const union = (root) => {
-    const faces = root.querySelectorAll('.face-floor, .face-left, .face-back, .prop')
+    const faces = root.querySelectorAll('.face-floor, .face-left, .face-back')
     let minX = Infinity
     let minY = Infinity
     let maxX = -Infinity
