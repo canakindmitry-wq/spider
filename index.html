@@ -42,53 +42,57 @@
 
         <div id="room" class="room">
           <div class="sunbeam" aria-hidden="true"></div>
-          <div class="wall">
-            <div class="wall-shadow" aria-hidden="true"></div>
-
-            <div class="poster-row deco poster" data-deco="poster">
-              <div class="art-poster p-cat"><span>KEEP<br />CALM</span></div>
-              <div class="art-poster p-city"></div>
-              <div class="art-poster p-out"><span>CITY</span></div>
+          <div class="room-3d">
+            <div class="wall-side">
+              <div class="wall-side-shade" aria-hidden="true"></div>
+              <div class="coat-rack" aria-hidden="true">
+                <span class="peg"></span><span class="peg"></span><span class="peg"></span>
+                <span class="robe"></span>
+              </div>
+              <button type="button" class="hotspot window" data-hot="hero" aria-label="Работа супергероем">
+                <div class="window-glass">
+                  <div class="day-sky"></div>
+                  <div class="cloud c1"></div>
+                  <div class="cloud c2"></div>
+                  <div class="mini-city"></div>
+                  <div class="spidey-swing" id="window-spidey"></div>
+                </div>
+                <span class="label">Герой</span>
+              </button>
+              <div class="baseboard-side" aria-hidden="true"></div>
             </div>
+            <div class="wall">
+              <div class="wall-shadow" aria-hidden="true"></div>
+              <div class="corner-join" aria-hidden="true"></div>
 
-            <button type="button" class="hotspot wall-photos" data-hot="photos" aria-label="Стена с фото">
-              <div id="wall-frames" class="wall-frames"></div>
-              <span class="label">Стена</span>
-            </button>
+              <div class="poster-row deco poster" data-deco="poster">
+                <div class="art-poster p-cat"><span>KEEP<br />CALM</span></div>
+                <div class="art-poster p-city"></div>
+                <div class="art-poster p-out"><span>CITY</span></div>
+              </div>
 
-            <button type="button" class="hotspot trophy" data-hot="achievements" aria-label="Достижения">
-              <div class="trophy-art"><i></i><b></b></div>
-              <span class="label">Достижения</span>
-            </button>
+              <button type="button" class="hotspot wall-photos" data-hot="photos" aria-label="Стена с фото">
+                <div id="wall-frames" class="wall-frames"></div>
+                <span class="label">Стена</span>
+              </button>
 
-            <div class="deco shelf" data-deco="shelf">
-              <div class="shelf-art">
-                <span class="board"></span>
-                <i></i><i></i><i></i>
-                <b class="cube"></b>
-                <em class="frame-mini"></em>
+              <button type="button" class="hotspot trophy" data-hot="achievements" aria-label="Достижения">
+                <div class="trophy-art"><i></i><b></b></div>
+                <span class="label">Достижения</span>
+              </button>
+
+              <div class="deco shelf" data-deco="shelf">
+                <div class="shelf-art">
+                  <span class="board"></span>
+                  <i></i><i></i><i></i>
+                  <b class="cube"></b>
+                  <em class="frame-mini"></em>
+                </div>
+              </div>
+              <div class="deco lamp" data-deco="lamp">
+                <div class="lamp-art"><span class="glow"></span></div>
               </div>
             </div>
-            <div class="deco lamp" data-deco="lamp">
-              <div class="lamp-art"><span class="glow"></span></div>
-            </div>
-
-            <div class="coat-rack" aria-hidden="true">
-              <span class="peg"></span><span class="peg"></span><span class="peg"></span>
-              <span class="robe"></span>
-            </div>
-
-            <button type="button" class="hotspot window" data-hot="hero" aria-label="Работа супергероем">
-              <div class="window-glass">
-                <div class="day-sky"></div>
-                <div class="cloud c1"></div>
-                <div class="cloud c2"></div>
-                <div class="mini-city"></div>
-                <div class="spidey-swing" id="window-spidey"></div>
-              </div>
-              <span class="label">Герой</span>
-            </button>
-          </div>
 
           <div class="floor">
             <div class="planks" aria-hidden="true"></div>
@@ -177,6 +181,7 @@
               <span id="tv-badge" class="badge hidden">+200</span>
               <span class="label">ТВ</span>
             </button>
+            </div>
           </div>
         </div>
       </section>

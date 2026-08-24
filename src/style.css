@@ -329,35 +329,111 @@ button {
   }
 }
 
-/* ===== Комната: уютный изометрический 3D ===== */
+/* ===== Комната: угол, видны две стены ===== */
 .room {
   flex: 1;
-  display: flex;
-  flex-direction: column;
   min-height: 0;
   position: relative;
-  background: #ead9bc;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 80% 0%, #f6ead0, #cbb48a 62%, #b89a6c);
+  perspective: 900px;
+  perspective-origin: 72% 38%;
 }
 
 .sunbeam {
   position: absolute;
-  right: 2%;
+  right: 0;
   top: 0;
-  width: 46%;
-  height: 70%;
-  background: linear-gradient(115deg, rgba(255, 236, 170, 0.55), transparent 62%);
+  width: 52%;
+  height: 72%;
+  background: linear-gradient(118deg, rgba(255, 236, 170, 0.5), transparent 64%);
   pointer-events: none;
-  z-index: 3;
+  z-index: 8;
   mix-blend-mode: soft-light;
 }
 
-.wall {
-  height: 40%;
+.room-3d {
+  position: absolute;
+  inset: -3% -8% -10% -12%;
+  display: flex;
+  flex-direction: column;
+  transform-style: preserve-3d;
+  transform: rotateX(12deg) rotateY(28deg) translate3d(-2%, 3%, 0);
+  transform-origin: 28% 80%;
+}
+
+.wall-side {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 52%;
+  z-index: 5;
+  transform-origin: left center;
+  transform: rotateY(90deg);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
   background:
-    linear-gradient(90deg, rgba(139, 85, 48, 0.08), transparent 18%),
+    linear-gradient(90deg, #e4d3b4 0%, #f4ead8 55%, #efe3cf);
+  box-shadow:
+    inset -22px 0 28px rgba(90, 55, 30, 0.16),
+    8px 0 18px rgba(90, 55, 30, 0.12);
+  overflow: hidden;
+}
+
+.wall-side-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(90, 55, 30, 0.18), transparent 42%);
+  pointer-events: none;
+}
+
+.baseboard-side {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 12px;
+  background: linear-gradient(#d7b48a, #b07a48);
+  box-shadow: 0 -6px 10px rgba(90, 55, 30, 0.12);
+}
+
+.wall-side .coat-rack {
+  left: 10%;
+  top: auto;
+  bottom: 18%;
+  width: 42%;
+}
+
+.wall-side .window {
+  left: 10%;
+  right: 8%;
+  top: 8%;
+  width: auto;
+  height: 64%;
+}
+
+.wall {
+  height: 42%;
+  background:
+    linear-gradient(90deg, rgba(90, 55, 30, 0.16), transparent 22%),
     linear-gradient(#f7efe0, #efe4d0);
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: inset 0 18px 24px rgba(255, 255, 255, 0.18);
+}
+
+.corner-join {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 14px;
+  background: linear-gradient(90deg, rgba(90, 55, 30, 0.22), transparent);
+  pointer-events: none;
+  z-index: 4;
 }
 
 .wall-shadow {
@@ -384,13 +460,16 @@ button {
 .floor {
   flex: 1;
   position: relative;
-  background: repeating-linear-gradient(
-    90deg,
-    #e8d0a8 0 34px,
-    #d7b48a 34px 36px,
-    #f0ddba 36px 70px,
-    #c9a06e 70px 72px
-  );
+  background:
+    linear-gradient(180deg, rgba(90, 55, 30, 0.12), transparent 18%),
+    repeating-linear-gradient(
+      90deg,
+      #e8d0a8 0 34px,
+      #d7b48a 34px 36px,
+      #f0ddba 36px 70px,
+      #c9a06e 70px 72px
+    );
+  box-shadow: inset 28px 0 30px rgba(90, 55, 30, 0.1);
 }
 
 .planks {
@@ -441,9 +520,9 @@ button {
 }
 
 .wall-photos {
-  left: 8px;
+  left: 16%;
   bottom: 10px;
-  width: 36%;
+  width: 34%;
 }
 
 .wall-frames {
@@ -476,7 +555,7 @@ button {
 
 .poster-row {
   position: absolute;
-  left: 12%;
+  left: 22%;
   top: 8px;
   display: flex;
   gap: 5px;
@@ -520,7 +599,7 @@ button {
 }
 
 .trophy {
-  left: 40%;
+  left: 52%;
   bottom: 8px;
   width: 18%;
 }
@@ -684,12 +763,13 @@ button {
 
 .w-side {
   position: absolute;
-  right: 0;
-  top: 8px;
-  width: 10px;
-  height: 88%;
-  background: #8b5530;
+  right: -6px;
+  top: 10px;
+  width: 14px;
+  height: 86%;
+  background: linear-gradient(90deg, #6f3f1c, #8b5530);
   border-radius: 0 8px 8px 0;
+  transform: skewY(-8deg);
 }
 
 .w-front {
@@ -761,6 +841,20 @@ button {
   position: relative;
   width: 100%;
   height: 70px;
+}
+
+.bed-3d::after {
+  content: "";
+  position: absolute;
+  right: -9px;
+  top: 24px;
+  width: 12px;
+  height: 46px;
+  background: linear-gradient(#8b5530, #5c3a1e);
+  border-radius: 0 8px 8px 0;
+  transform: skewY(-16deg);
+  box-shadow: 3px 6px 0 rgba(90, 55, 30, 0.18);
+  z-index: 0;
 }
 
 .bed-frame {
@@ -910,10 +1004,23 @@ button {
 .desk-top {
   width: 118px;
   height: 14px;
+  position: relative;
   background: linear-gradient(#e8b87a, #c08654);
   border-radius: 8px;
   box-shadow: 0 8px 0 rgba(90, 55, 30, 0.18), inset 0 3px 0 rgba(255, 255, 255, 0.35);
   z-index: 2;
+}
+
+.desk-top::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  top: 2px;
+  width: 10px;
+  height: 14px;
+  background: #8b5530;
+  transform: skewY(-28deg);
+  border-radius: 0 4px 4px 0;
 }
 
 .desk-leg {
@@ -1009,6 +1116,18 @@ button {
   position: relative;
 }
 
+.crate::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  top: 6px;
+  width: 10px;
+  height: 34px;
+  background: #78350f;
+  border-radius: 0 8px 8px 0;
+  transform: skewY(-14deg);
+}
+
 .crate i {
   position: absolute;
   inset: 8px;
@@ -1030,6 +1149,19 @@ button {
   width: 64px;
   position: relative;
   filter: drop-shadow(0 8px 4px rgba(90, 55, 30, 0.22));
+}
+
+.tv-art::after {
+  content: "";
+  position: absolute;
+  right: -8px;
+  top: 10px;
+  width: 10px;
+  height: 40px;
+  background: #b45309;
+  border-radius: 0 8px 8px 0;
+  transform: skewY(-12deg);
+  z-index: 0;
 }
 
 .ant {
@@ -1169,7 +1301,7 @@ button {
 }
 
 .deco.shelf {
-  left: 38%;
+  left: 50%;
   bottom: 12px;
 }
 
@@ -1988,6 +2120,10 @@ button {
   }
 
   .window { height: 86%; }
+
+  .room-3d {
+    transform: rotateX(9deg) rotateY(22deg) translate3d(-2%, 2%, 0);
+  }
 }
 
 @media (min-width: 700px) {
