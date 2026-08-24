@@ -271,7 +271,8 @@ button {
   padding: calc(8px + env(safe-area-inset-top, 0px)) 8px 8px;
   background: linear-gradient(#fff6e8, #f0dcc0);
   border-bottom: 3px solid #e2c39a;
-  z-index: 5;
+  position: relative;
+  z-index: 20;
 }
 
 @media (max-width: 420px) {
@@ -337,8 +338,8 @@ button {
   overflow: hidden;
   background:
     radial-gradient(circle at 80% 0%, #f6ead0, #cbb48a 62%, #b89a6c);
-  perspective: 900px;
-  perspective-origin: 72% 38%;
+  perspective: 760px;
+  perspective-origin: 64% 42%;
 }
 
 .sunbeam {
@@ -355,12 +356,12 @@ button {
 
 .room-3d {
   position: absolute;
-  inset: -3% -8% -10% -12%;
+  inset: 0;
   display: flex;
   flex-direction: column;
   transform-style: preserve-3d;
-  transform: rotateX(12deg) rotateY(28deg) translate3d(-2%, 3%, 0);
-  transform-origin: 28% 80%;
+  transform: rotateX(7deg) rotateY(14deg);
+  transform-origin: 50% 90%;
 }
 
 .wall-side {
@@ -368,18 +369,17 @@ button {
   left: 0;
   top: 0;
   bottom: 0;
-  width: 52%;
-  z-index: 5;
+  width: 38%;
+  z-index: 6;
   transform-origin: left center;
-  transform: rotateY(90deg);
+  transform: rotateY(50deg);
   transform-style: preserve-3d;
-  backface-visibility: hidden;
   background:
-    linear-gradient(90deg, #e4d3b4 0%, #f4ead8 55%, #efe3cf);
+    linear-gradient(90deg, #d9c4a0 0%, #f3e9d6 42%, #efe3cf);
   box-shadow:
-    inset -22px 0 28px rgba(90, 55, 30, 0.16),
-    8px 0 18px rgba(90, 55, 30, 0.12);
-  overflow: hidden;
+    inset -18px 0 24px rgba(90, 55, 30, 0.18),
+    10px 0 16px rgba(90, 55, 30, 0.14);
+  border-right: 5px solid rgba(139, 85, 48, 0.28);
 }
 
 .wall-side-shade {
@@ -400,18 +400,21 @@ button {
 }
 
 .wall-side .coat-rack {
-  left: 10%;
+  left: 8%;
   top: auto;
-  bottom: 18%;
-  width: 42%;
+  bottom: 14%;
+  width: 48%;
 }
 
 .wall-side .window {
-  left: 10%;
+  left: 6%;
   right: 8%;
-  top: 8%;
+  top: 10%;
   width: auto;
-  height: 64%;
+  height: 62%;
+  min-width: 72px;
+  min-height: 110px;
+  z-index: 7;
 }
 
 .wall {
@@ -745,9 +748,9 @@ button {
 }
 
 .hanger {
-  left: 2%;
+  left: 22%;
   top: 2%;
-  width: 30%;
+  width: 28%;
   height: 62%;
 }
 
@@ -949,9 +952,9 @@ button {
 }
 
 .desk {
-  left: 3%;
+  left: 20%;
   bottom: 6%;
-  width: 26%;
+  width: 24%;
 }
 
 .cam-art {
@@ -2119,10 +2122,15 @@ button {
     margin: 6px 20px 8px;
   }
 
-  .window { height: 86%; }
+  .window { height: 70%; }
 
   .room-3d {
-    transform: rotateX(9deg) rotateY(22deg) translate3d(-2%, 2%, 0);
+    transform: rotateX(6deg) rotateY(12deg);
+  }
+
+  .wall-side {
+    width: 30%;
+    transform: rotateY(46deg);
   }
 }
 
