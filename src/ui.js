@@ -149,6 +149,19 @@ export function renderRoom() {
   $('cam-level-pip').textContent = `ур. ${state.cameraLevel}`
   $('costume-level-pip').textContent = `ур. ${state.costumeLevel}`
   $('passive-level-pip').textContent = `ур. ${state.passiveLevel}`
+
+  requestAnimationFrame(() => requestAnimationFrame(fitIsoRoom))
+}
+
+export function fitIsoRoom() {
+  const room = $('room')
+  const iso = room?.querySelector('.room-3d')
+  if (!room || !iso) return
+  const w = room.clientWidth
+  const h = room.clientHeight
+  if (w < 40 || h < 40) return
+  const scale = Math.min(w / 520, h / 400, 1.28)
+  iso.style.setProperty('--iso-scale', String(Math.max(0.58, Math.round(scale * 1000) / 1000)))
 }
 
 function openModal(title, html, { wide = false } = {}) {
@@ -498,6 +511,12 @@ export function bindUI() {
     sfx.tap()
     openPremium()
   })
+
+  window.addEventListener('resize', fitIsoRoom)
+  if (typeof ResizeObserver !== 'undefined') {
+    const room = $('room')
+    if (room) new ResizeObserver(fitIsoRoom).observe(room)
+  }
 
   $('room').addEventListener('click', (e) => {
     const hot = e.target.closest('[data-hot]')

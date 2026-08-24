@@ -1,6 +1,7 @@
 import '@fontsource/nunito/800.css'
 import '@fontsource/nunito/900.css'
 import './style.css'
+import './room.css'
 import { initYandex } from './yandex.js'
 import { loadState, saveState } from './state.js'
 import { loadMute } from './audio.js'

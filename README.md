@@ -72,4 +72,4 @@ SDK подключается как `/sdk.js` на серверах Яндекс
 
 ## Стек
 
-Чистый JavaScript (Vite), без Phaser. Графика — CSS, SVG и эмодзи. Звук — HTMLAudioElement и MP3.
+Чистый JavaScript (Vite), без Phaser. Комната — CSS 3D (изометрический угол из трёх плоскостей), остальная графика — CSS, SVG и эмодзи. Звук — HTMLAudioElement и MP3.
