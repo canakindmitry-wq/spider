@@ -227,10 +227,18 @@ export function startHeroGame({ onDone }) {
   $('screen-hero').classList.remove('hidden')
   running = true
   gameplayStart()
-  spawnHeroTarget()
-  if (c.slots > 1) spawnHeroTarget()
-  heroSession.lastSpawn = performance.now()
-  heroTimer = requestAnimationFrame(loopHero)
+  const tryStart = () => {
+    if (!running || !heroSession) return
+    if (city.clientHeight < 80) {
+      requestAnimationFrame(tryStart)
+      return
+    }
+    spawnHeroTarget()
+    if (c.slots > 1) spawnHeroTarget()
+    heroSession.lastSpawn = performance.now()
+    heroTimer = requestAnimationFrame(loopHero)
+  }
+  requestAnimationFrame(tryStart)
 }
 
 function buildCityArt(space) {
@@ -275,11 +283,13 @@ function spawnHeroTarget() {
 
   const life = kind === 'super' ? rand(2200, 2800) : rand(2000, 3000)
   const timeout = setTimeout(() => despawn(id), life)
-  el.addEventListener('pointerdown', (e) => {
+  const onHit = (e) => {
     e.preventDefault()
     e.stopPropagation()
     hitTarget(id)
-  })
+  }
+  el.addEventListener('pointerdown', onHit)
+  el.addEventListener('click', onHit)
 
   city.appendChild(el)
   heroSession.targets.set(id, { el, kind, timeout })

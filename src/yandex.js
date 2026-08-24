@@ -74,7 +74,21 @@ function showFakeAd(title = 'Реклама') {
   })
 }
 
+/** SDK нужен только внутри iframe Яндекс Игр. Локально он сыплет ошибками postMessage. */
+function shouldLoadSdk() {
+  try {
+    if (window.self !== window.top) return true
+  } catch {
+    return true
+  }
+  return /yandex\.(ru|net)/i.test(location.host)
+}
+
 export async function initYandex() {
+  if (!shouldLoadSdk()) {
+    ready = true
+    return null
+  }
   try {
     await loadScript('https://yandex.ru/games/sdk/v2')
     if (typeof window.YaGames === 'undefined') throw new Error('no YaGames')
@@ -86,7 +100,8 @@ export async function initYandex() {
     }
     ready = true
     try {
-      ysdk.features?.LoadingAPI?.ready()
+      const p = ysdk.features?.LoadingAPI?.ready()
+      if (p && typeof p.catch === 'function') p.catch(() => {})
     } catch {
       /* ignore */
     }
@@ -101,7 +116,8 @@ export async function initYandex() {
 
 export function gameplayStart() {
   try {
-    ysdk?.features?.GameplayAPI?.start()
+    const p = ysdk?.features?.GameplayAPI?.start()
+    if (p && typeof p.catch === 'function') p.catch(() => {})
   } catch {
     /* ignore */
   }
@@ -109,7 +125,8 @@ export function gameplayStart() {
 
 export function gameplayStop() {
   try {
-    ysdk?.features?.GameplayAPI?.stop()
+    const p = ysdk?.features?.GameplayAPI?.stop()
+    if (p && typeof p.catch === 'function') p.catch(() => {})
   } catch {
     /* ignore */
   }
