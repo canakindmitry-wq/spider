@@ -167,12 +167,13 @@ export function fitIsoRoom() {
   void iso.offsetWidth
 
   const union = (root) => {
-    const faces = root.querySelectorAll('.face-floor, .face-left, .face-back')
+    const faces = root.querySelectorAll('.face-floor, .face-left, .face-back, .prop')
     let minX = Infinity
     let minY = Infinity
     let maxX = -Infinity
     let maxY = -Infinity
     faces.forEach((f) => {
+      if (f.matches('.fridge:not(.on), .plant:not(.on)')) return
       const r = f.getBoundingClientRect()
       minX = Math.min(minX, r.left)
       minY = Math.min(minY, r.top)

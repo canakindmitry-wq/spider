@@ -155,24 +155,31 @@
 }
 
 .s-ward {
-  left: 4%;
-  top: 4%;
-  width: 28%;
+  left: 3%;
+  top: 3%;
+  width: 24%;
   height: 16%;
 }
 
 .s-bed {
   left: 34%;
-  top: 6%;
-  width: 56%;
-  height: 20%;
+  top: 4%;
+  width: 58%;
+  height: 24%;
 }
 
 .s-desk {
-  left: 3%;
-  top: 58%;
-  width: 34%;
+  left: 2%;
+  top: 54%;
+  width: 36%;
   height: 24%;
+}
+
+.s-tv {
+  left: 66%;
+  top: 38%;
+  width: 24%;
+  height: 18%;
 }
 
 /* ===== Кликабельные зоны ===== */
@@ -227,27 +234,52 @@
   box-shadow: 0 2px 0 #b45309;
 }
 
-.stand {
-  position: absolute;
-  transform-style: preserve-3d;
-  pointer-events: auto;
-  transform-origin: 50% 100%;
-  transform: rotateX(-90deg);
-}
-
 /* ===== Задняя стена: окно, фото, кубок ===== */
 .face-back .window {
-  left: 16%;
-  top: 9%;
-  width: 88px;
-  height: 112px;
+  left: 30%;
+  top: 7%;
+  width: 92px;
+  height: 118px;
   min-width: 72px;
   min-height: 96px;
+  transform: translateZ(14px);
+}
+
+.win-3d {
+  width: 100%;
+  flex: 1;
+  position: relative;
+  transform-style: preserve-3d;
+  min-height: 72px;
+}
+
+.win-sd {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 12px;
+  height: 100%;
+  background: linear-gradient(90deg, #8b5530, #5c3a1e);
+  transform-origin: right center;
+  transform: rotateY(-90deg);
+  border-radius: 0 8px 8px 0;
+}
+
+.win-tp {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 12px;
+  background: linear-gradient(#e8b87a, #c08654);
+  transform-origin: top center;
+  transform: rotateX(90deg);
+  border-radius: 8px 8px 0 0;
 }
 
 .window-glass {
   width: 100%;
-  flex: 1;
+  height: 100%;
   border: 5px solid #c08654;
   border-radius: 12px;
   overflow: hidden;
@@ -338,16 +370,18 @@
 }
 
 .face-back .wall-photos {
-  left: 50%;
-  top: 12%;
+  left: 58%;
+  top: 8%;
   width: 120px;
+  transform: translateZ(10px);
 }
 
 .wall-frames {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 4px;
+  gap: 6px;
   width: 100%;
+  transform-style: preserve-3d;
 }
 
 .frame {
@@ -363,6 +397,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+  transform: translateZ(8px);
+  transform-style: preserve-3d;
+}
+
+.frame::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 8px;
+  height: calc(100% + 8px);
+  background: linear-gradient(90deg, #8b5530, #5c3a1e);
+  transform-origin: right center;
+  transform: rotateY(-90deg);
+  border-radius: 0 6px 6px 0;
 }
 
 .frame.empty {
@@ -372,15 +422,48 @@
 }
 
 .face-back .trophy {
-  left: 78%;
-  top: 44%;
+  left: 86%;
+  top: 12%;
   width: 56px;
+  transform: translateZ(16px);
+}
+
+.trophy-3d {
+  position: relative;
+  width: 44px;
+  height: 58px;
+  transform-style: preserve-3d;
+}
+
+.trophy-base {
+  --w: 28px;
+  --h: 12px;
+  --d: 20px;
+  position: absolute;
+  left: 8px;
+  bottom: 0;
+}
+
+.trophy-base .ft {
+  background: linear-gradient(#d6b07a, #8b5530);
+  border-radius: 3px;
+}
+
+.trophy-base .sd {
+  background: #6f3f1c;
+}
+
+.trophy-base .tp {
+  background: linear-gradient(#e8c98a, #c08654);
 }
 
 .trophy-art {
   width: 40px;
   height: 44px;
-  position: relative;
+  position: absolute;
+  left: 2px;
+  top: 0;
+  transform: translateZ(10px);
   filter: drop-shadow(0 6px 4px rgba(90, 55, 30, 0.25));
 }
 
@@ -406,12 +489,14 @@
 /* ===== Левая стена: вешалка, постеры, полка, лампа ===== */
 .coat-rack {
   position: absolute;
-  left: 54%;
-  top: 10%;
+  left: 62%;
+  top: 8%;
   width: 58px;
   height: 22px;
   z-index: 1;
   pointer-events: none;
+  transform: translateZ(-10px);
+  transform-style: preserve-3d;
 }
 
 .coat-rack .rail {
@@ -455,13 +540,15 @@
 
 .poster-row {
   position: absolute;
-  left: 8%;
-  top: 8px;
+  left: 34%;
+  top: 10px;
   display: flex;
   gap: 5px;
   z-index: 2;
   opacity: 1 !important;
   pointer-events: none;
+  transform: translateZ(-8px);
+  transform-style: preserve-3d;
 }
 
 .deco.poster:not(.on) .art-poster {
@@ -482,6 +569,8 @@
   color: #fff;
   text-align: center;
   padding: 2px;
+  transform: translateZ(6px);
+  position: relative;
 }
 
 .p-cat {
@@ -514,8 +603,9 @@
 }
 
 .deco.shelf {
-  left: 42%;
-  top: 8px;
+  left: 48%;
+  top: 46%;
+  transform: translateZ(-12px);
 }
 
 .shelf-art {
@@ -580,8 +670,9 @@
 }
 
 .deco.lamp {
-  left: 24%;
-  top: 36%;
+  left: 38%;
+  top: 38%;
+  transform: translateZ(-14px);
 }
 
 .lamp-art {
@@ -617,93 +708,143 @@
   box-shadow: 0 8px 12px rgba(29, 78, 216, 0.2);
 }
 
-/* ===== Мебель на полу ===== */
-.prop-wardrobe {
-  left: 10px;
-  top: 8px;
-  width: 90px;
-  height: 176px;
+/* ===== 3D-мебель: коробки на полу комнаты ===== */
+.prop {
+  position: absolute;
+  bottom: 0;
+  transform-style: preserve-3d;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
 }
 
-.wardrobe-3d {
-  position: absolute;
-  left: 8px;
-  top: 4px;
-  width: 72px;
-  height: 148px;
+.prop > .label {
+  transform: translateZ(48px);
+  pointer-events: none;
+}
+
+.solid {
+  --w: 72px;
+  --h: 80px;
+  --d: 32px;
+  width: var(--w);
+  height: var(--h);
+  position: relative;
   transform-style: preserve-3d;
   pointer-events: none;
 }
 
-.w-front {
+.solid .ft,
+.solid .sd,
+.solid .tp {
   position: absolute;
-  inset: 0;
-  display: flex;
-  gap: 4px;
-  padding: 6px 5px;
-  background: linear-gradient(#5c3a1e, #3d2414);
-  border-radius: 6px;
-  box-shadow: 4px 8px 0 rgba(90, 55, 30, 0.18);
+  display: block;
+  box-sizing: border-box;
 }
 
-.w-door {
+.solid .ft {
+  width: var(--w);
+  height: var(--h);
+  left: 0;
+  top: 0;
+}
+
+.solid .sd {
+  top: 0;
+  left: 100%;
+  width: var(--d);
+  height: var(--h);
+  transform-origin: left center;
+  transform: rotateY(90deg);
+}
+
+.solid .tp {
+  top: 0;
+  left: 0;
+  width: var(--w);
+  height: var(--d);
+  transform-origin: top center;
+  transform: rotateX(90deg);
+}
+
+/* Шкаф — левый задний угол */
+.prop-wardrobe {
+  left: 6px;
+  width: 86px;
+  height: 172px;
+  transform: translateZ(8px);
+  z-index: 2;
+}
+
+.ward {
+  --w: 72px;
+  --h: 158px;
+  --d: 42px;
+}
+
+.ward .ft {
+  display: flex;
+  gap: 4px;
+  padding: 8px 6px;
+  background: linear-gradient(#5c3a1e, #3d2414);
+  border-radius: 4px 0 0 4px;
+}
+
+.ward .door {
   flex: 1;
+  display: block;
   background: linear-gradient(#f3e0b8, #e8c98a);
-  border-radius: 4px;
+  border-radius: 3px;
   box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.45);
 }
 
-.w-mirror {
+.ward .mirror {
   display: block;
   margin: 10px 5px;
-  height: 72%;
+  height: 74%;
   border-radius: 4px;
-  background: linear-gradient(135deg, #e0f2fe, #7dd3fc 40%, #bae6fd);
+  background: linear-gradient(135deg, #e0f2fe, #7dd3fc 42%, #bae6fd);
   box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.7);
 }
 
-.w-side {
-  position: absolute;
-  width: 28px;
-  height: 100%;
-  right: 0;
-  top: 0;
-  transform: rotateY(90deg);
-  transform-origin: right;
-  background: linear-gradient(90deg, #3d2414, #6f3f1c);
-  border-radius: 0 6px 6px 0;
+.ward .sd {
+  background: linear-gradient(90deg, #3d2414, #7a4a22);
 }
 
-.w-top {
-  position: absolute;
-  width: 100%;
-  height: 28px;
-  top: 0;
-  left: 0;
-  transform: rotateX(90deg);
-  transform-origin: top;
+.ward .tp {
   background: linear-gradient(#8b5530, #6f3f1c);
 }
 
 .hanger-bar {
-  width: 64%;
-  height: 7px;
-  background: linear-gradient(#e8d5b5, #a67c52);
-  border-radius: 8px;
-  box-shadow: 0 3px 0 rgba(90, 55, 30, 0.2);
   position: absolute;
-  left: 12%;
-  top: 10px;
-  z-index: 2;
+  left: 14px;
+  top: 14px;
+  width: 48px;
+  height: 6px;
+  border-radius: 8px;
+  background: linear-gradient(#e8d5b5, #a67c52);
+  transform: translateZ(22px);
+  z-index: 3;
+  pointer-events: none;
 }
 
 .hanger-suit {
-  width: 78px;
-  height: 112px;
   position: absolute;
-  left: 6px;
-  top: 18px;
-  z-index: 3;
+  left: 8px;
+  top: 22px;
+  width: 64px;
+  height: 108px;
+  z-index: 4;
+  pointer-events: none;
+  transform: translateZ(24px);
+}
+
+.hanger-suit svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
 .rainbow-suit {
@@ -716,429 +857,570 @@
   }
 }
 
-.prop-bed {
-  left: 118px;
-  top: 20px;
-  width: 170px;
-  height: 80px;
-}
-
-.bed-art {
-  width: 100%;
-}
-
-.bed-3d {
-  position: relative;
-  width: 100%;
-  height: 64px;
-  transform-style: preserve-3d;
-}
-
-.bed-side {
-  position: absolute;
-  right: -8px;
-  top: 18px;
-  width: 14px;
-  height: 42px;
-  background: linear-gradient(#8b5530, #5c3a1e);
-  border-radius: 0 8px 8px 0;
-  transform: rotateY(70deg);
-  transform-origin: left;
-  z-index: 0;
-}
-
-.bed-frame {
-  position: absolute;
-  inset: 16px 4px 0;
-  background: linear-gradient(#c08654, #8b5530);
-  border-radius: 10px;
-  box-shadow: 0 8px 0 rgba(90, 55, 30, 0.22);
-}
-
-.mattress {
-  position: absolute;
-  left: 8px;
-  right: 10px;
-  top: 10px;
-  height: 20px;
-  background: linear-gradient(#fff, #f1efe8);
-  border-radius: 8px;
-}
-
-.duvet {
-  position: absolute;
-  left: 10px;
-  right: 12px;
-  top: 20px;
-  height: 28px;
-  background:
-    radial-gradient(circle at 20% 40%, rgba(255, 255, 255, 0.25), transparent 40%),
-    linear-gradient(#4a7fd4, var(--duvet));
-  border-radius: 10px;
-  box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.25);
-}
-
-.pillow {
-  position: absolute;
-  right: 16px;
-  top: 4px;
-  width: 28px;
-  height: 16px;
-  background: linear-gradient(#1e3d73, #2d5aa0);
-  border-radius: 8px;
-  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.25);
-}
-
-.bed-art.on .duvet {
-  background: linear-gradient(#60a5fa, #1d4ed8);
-}
-
+/* Гитара между шкафом и кроватью */
 .guitar {
-  left: 98px;
-  top: 14px;
-  width: 18px;
-  height: 58px;
-  background:
-    radial-gradient(circle at 50% 72%, #c08654 0 10px, transparent 11px),
-    linear-gradient(#e8b87a, #8b5530);
-  border-radius: 8px;
-  transform: rotateX(-90deg) rotateZ(-18deg);
+  left: 82px;
+  width: 28px;
+  height: 78px;
+  transform: translateZ(28px) rotateY(18deg) rotateZ(-16deg);
   pointer-events: none;
-  z-index: 1;
-  box-shadow: 0 6px 0 rgba(90, 55, 30, 0.12);
-}
-
-.prop-photo {
-  left: 8px;
-  top: 148px;
-  width: 132px;
-  height: 90px;
-}
-
-.desk-3d {
-  position: absolute;
-  left: 4px;
-  bottom: 18px;
-  width: 96px;
-  height: 42px;
-  transform-style: preserve-3d;
-  pointer-events: none;
-}
-
-.d-top {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 12px;
-  background: linear-gradient(#e8b87a, #c08654);
-  border-radius: 6px;
-  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.35);
   z-index: 2;
 }
 
-.d-front {
+.g-body {
   position: absolute;
-  left: 4px;
-  top: 12px;
-  width: 88px;
-  height: 28px;
-  background: linear-gradient(#c08654, #8b5530);
-  border-radius: 0 0 8px 8px;
-  display: flex;
-  gap: 6px;
-  padding: 6px 8px;
-  box-shadow: 0 6px 0 rgba(90, 55, 30, 0.18);
+  left: 2px;
+  bottom: 0;
+  width: 24px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #e8b87a, #8b5530 62%, #5c3a1e);
+  transform-style: preserve-3d;
 }
 
-.d-front i {
+.g-body em {
+  position: absolute;
+  right: 0;
+  top: 4px;
+  width: 10px;
+  height: 22px;
+  border-radius: 40%;
+  background: #6f3f1c;
+  transform: rotateY(55deg);
+  transform-origin: right center;
+}
+
+.g-neck {
+  position: absolute;
+  left: 11px;
+  top: 0;
+  width: 7px;
+  height: 50px;
+  border-radius: 3px;
+  background: linear-gradient(#e8c98a, #c08654);
+  transform-style: preserve-3d;
+}
+
+.g-neck em {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  background: #8b5530;
+  transform-origin: right center;
+  transform: rotateY(70deg);
+}
+
+/* Кровать вдоль задней стены */
+.prop-bed {
+  left: 112px;
+  width: 216px;
+  height: 72px;
+  transform: translateZ(10px);
+  z-index: 2;
+}
+
+.bed-art {
+  width: 208px;
+  height: 58px;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.bed-box {
+  --w: 208px;
+  --h: 20px;
+  --d: 86px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+.bed-box .ft {
+  background: linear-gradient(#c08654, #8b5530);
+  border-radius: 0 0 8px 8px;
+}
+
+.bed-box .sd {
+  background: linear-gradient(90deg, #8b5530, #5c3a1e);
+}
+
+.bed-box .tp {
+  background: linear-gradient(#d4a06a, #c08654);
+}
+
+.mattress {
+  --w: 196px;
+  --h: 10px;
+  --d: 74px;
+  position: absolute;
+  left: 6px;
+  bottom: 18px;
+}
+
+.mattress .ft {
+  background: linear-gradient(#fff, #efece4);
+}
+
+.mattress .sd {
+  background: #d6d3d1;
+}
+
+.mattress .tp {
+  background: linear-gradient(#fff, #f1efe8);
+}
+
+.duvet {
+  --w: 138px;
+  --h: 8px;
+  --d: 68px;
+  position: absolute;
+  left: 10px;
+  bottom: 26px;
+}
+
+.duvet .ft {
+  background: linear-gradient(#4a7fd4, var(--duvet));
+}
+
+.duvet .sd {
+  background: #1e3d73;
+}
+
+.duvet .tp {
+  background:
+    radial-gradient(circle at 20% 40%, rgba(255, 255, 255, 0.28), transparent 42%),
+    linear-gradient(#4a7fd4, var(--duvet));
+}
+
+.bed-art.on .duvet .ft,
+.bed-art.on .duvet .tp {
+  background: linear-gradient(#60a5fa, #1d4ed8);
+}
+
+.pillow {
+  --w: 42px;
+  --h: 10px;
+  --d: 28px;
+  position: absolute;
+  right: 16px;
+  bottom: 28px;
+}
+
+.pillow .ft {
+  background: linear-gradient(#1e3d73, #2d5aa0);
+  border-radius: 6px;
+}
+
+.pillow .sd {
+  background: #152a52;
+}
+
+.pillow .tp {
+  background: linear-gradient(#3d6fb8, #2d5aa0);
+}
+
+/* Стол у левой стены, ближе к камере */
+.prop-photo {
+  left: 4px;
+  width: 134px;
+  height: 108px;
+  transform: translateZ(176px);
+  z-index: 5;
+}
+
+.desk-mesh {
+  position: relative;
+  width: 118px;
+  height: 78px;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.desk-box {
+  --w: 112px;
+  --h: 44px;
+  --d: 54px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+
+.desk-box .ft {
+  display: flex;
+  gap: 6px;
+  padding: 10px 8px 8px;
+  background: linear-gradient(#c08654, #8b5530);
+  border-radius: 0 0 8px 8px;
+}
+
+.desk-box .ft i {
   flex: 1;
   background: linear-gradient(#e8c98a, #c08654);
   border-radius: 4px;
   box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.35);
 }
 
-.d-side {
-  position: absolute;
-  width: 16px;
-  height: 40px;
-  right: 0;
-  top: 2px;
-  transform: rotateY(70deg);
-  transform-origin: left;
-  background: #6f3f1c;
-  border-radius: 0 6px 6px 0;
+.desk-box .sd {
+  background: linear-gradient(90deg, #6f3f1c, #8b5530);
 }
 
-.toy-laptop {
+.desk-box .tp {
+  background: linear-gradient(#e8b87a, #c08654);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.35);
+}
+
+.laptop-3d {
   position: absolute;
-  left: 18px;
-  top: 2px;
-  width: 64px;
+  left: 28px;
+  bottom: 44px;
+  width: 58px;
+  height: 36px;
+  transform: translateZ(18px);
+  transform-style: preserve-3d;
   z-index: 3;
 }
 
-.toy-laptop .lid {
-  height: 36px;
+.lp-screen {
+  position: absolute;
+  left: 0;
+  bottom: 8px;
+  width: 58px;
+  height: 34px;
+  padding: 4px;
   background: linear-gradient(#3b4254, #111827);
-  border-radius: 10px 10px 4px 4px;
-  padding: 5px;
-  box-shadow: 0 6px 10px rgba(56, 189, 248, 0.35), inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  border-radius: 8px 8px 3px 3px;
+  transform-origin: bottom center;
+  transform: rotateX(-28deg);
+  transform-style: preserve-3d;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
 }
 
-.screen-glow {
+.lp-side {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
   height: 100%;
-  border-radius: 6px;
+  background: #0f172a;
+  transform-origin: right center;
+  transform: rotateY(-90deg);
+}
+
+.screen-glow,
+.lp-screen i {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
   background:
     linear-gradient(rgba(255, 255, 255, 0.35), transparent 40%),
     linear-gradient(#7dd3fc, #38bdf8);
 }
 
-.toy-laptop .kb {
-  height: 8px;
-  border-radius: 0 0 8px 8px;
+.lp-base {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 58px;
+  height: 20px;
   background:
     repeating-linear-gradient(90deg, #1e293b 0 6px, #38bdf8 6px 7px),
     #111827;
+  border-radius: 0 0 6px 6px;
+  transform-origin: top center;
+  transform: rotateX(72deg);
 }
 
-.mug {
+.laptop-3d.mini {
+  width: 48px;
+  height: 30px;
+  left: 0;
+  bottom: 0;
+  transform: translateZ(0);
+}
+
+.laptop-3d.mini .lp-screen,
+.laptop-3d.mini .lp-base {
+  width: 48px;
+}
+
+.laptop-3d.mini .lp-screen {
+  height: 28px;
+}
+
+.chart-art.upgraded .lp-screen i,
+.chart-art.upgraded .screen-glow {
+  background: linear-gradient(#86efac, #22c55e);
+}
+
+.mug-3d {
   position: absolute;
   left: 8px;
-  top: 22px;
-  width: 12px;
-  height: 14px;
+  bottom: 46px;
+  width: 14px;
+  height: 16px;
+  transform: translateZ(22px);
+  transform-style: preserve-3d;
+  z-index: 3;
+}
+
+.mug-side {
+  position: absolute;
+  inset: 2px 1px 0;
   background: linear-gradient(#fff, #e5e7eb);
   border-radius: 4px 4px 6px 6px;
-  box-shadow: 0 4px 0 rgba(90, 55, 30, 0.12), inset 0 3px 0 #fff;
-  z-index: 3;
+}
+
+.mug-top {
+  position: absolute;
+  left: 1px;
+  top: 0;
+  width: 12px;
+  height: 8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 40%, #fff, #d6d3d1 55%, #b45309);
+  transform: rotateX(70deg);
+}
+
+.mug-handle {
+  position: absolute;
+  right: -4px;
+  top: 4px;
+  width: 7px;
+  height: 8px;
+  border: 2px solid #d6d3d1;
+  border-left: 0;
+  border-radius: 0 8px 8px 0;
 }
 
 .chair-3d {
   position: absolute;
-  right: -2px;
-  bottom: 10px;
-  width: 36px;
-  height: 52px;
+  left: 78px;
+  bottom: 0;
+  width: 40px;
+  height: 56px;
+  transform: translateZ(58px);
   transform-style: preserve-3d;
-  z-index: 2;
+  z-index: 4;
+  pointer-events: none;
 }
 
 .ch-back {
   position: absolute;
-  left: 4px;
+  left: 6px;
   top: 0;
   width: 28px;
   height: 28px;
   background: linear-gradient(#ff8a80, #e24b4b);
   border-radius: 12px 12px 4px 4px;
   box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.35);
+  transform-style: preserve-3d;
+}
+
+.ch-bside {
+  position: absolute;
+  left: 34px;
+  top: 2px;
+  width: 10px;
+  height: 26px;
+  background: #c93a3a;
+  border-radius: 0 8px 4px 0;
+  transform-origin: left center;
+  transform: rotateY(70deg);
 }
 
 .ch-seat {
   position: absolute;
-  left: 2px;
+  left: 4px;
   top: 24px;
   width: 32px;
-  height: 10px;
+  height: 18px;
   background: #c93a3a;
   border-radius: 6px;
+  transform: rotateX(72deg);
+  transform-origin: center;
 }
 
 .ch-arm {
   position: absolute;
-  top: 16px;
+  top: 18px;
   width: 5px;
   height: 16px;
   background: #111827;
   border-radius: 3px;
 }
 
-.ch-arm.l {
-  left: 0;
-}
-.ch-arm.r {
-  right: 0;
-}
+.ch-arm.l { left: 2px; }
+.ch-arm.r { right: 2px; }
 
 .ch-pole {
   position: absolute;
-  left: 16px;
+  left: 18px;
   top: 32px;
   width: 5px;
-  height: 12px;
+  height: 14px;
   background: #1f2937;
 }
 
-.ch-base {
+.ch-star {
   position: absolute;
   left: 6px;
   bottom: 0;
-  width: 24px;
+  width: 28px;
   height: 8px;
   background: #111827;
-  border-radius: 4px;
+  clip-path: polygon(50% 0, 100% 50%, 80% 100%, 20% 100%, 0 50%);
 }
 
+/* Камера и блог стоят на столе */
 .prop-cam {
-  left: 10px;
-  top: 118px;
-  width: 68px;
-  height: 74px;
+  left: 14px;
+  width: 64px;
+  height: 56px;
+  transform: translateZ(198px);
+  z-index: 6;
 }
 
-.cam-art {
-  width: 52px;
-  height: 38px;
-  background: linear-gradient(#4b5563, #111827);
-  border-radius: 14px;
+.cam-3d {
   position: relative;
-  box-shadow: 0 6px 0 #0a0a0c, inset 0 3px 0 rgba(255, 255, 255, 0.25);
+  width: 54px;
+  height: 36px;
+  transform-style: preserve-3d;
 }
 
-.cam-art i,
-.cam-art::after {
-  content: "";
+.cam-box {
+  --w: 46px;
+  --h: 28px;
+  --d: 24px;
+}
+
+.cam-box .ft {
+  background: linear-gradient(#4b5563, #111827);
+  border-radius: 8px 0 0 8px;
+}
+
+.cam-box .ft b {
   position: absolute;
-  right: 8px;
+  left: 6px;
   top: 8px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff, #67e8f9 28%, #0e7490 62%, #111);
-}
-
-.cam-art b {
-  position: absolute;
-  left: 8px;
-  top: 10px;
-  width: 10px;
+  width: 8px;
   height: 8px;
-  border-radius: 4px;
+  border-radius: 3px;
   background: #fbbf24;
 }
 
+.cam-box .sd {
+  background: #0f172a;
+}
+
+.cam-box .tp {
+  background: #334155;
+}
+
+.cam-lens {
+  position: absolute;
+  right: -8px;
+  top: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff, #67e8f9 28%, #0e7490 62%, #111);
+  transform: translateZ(12px);
+  box-shadow: 4px 0 0 #020617;
+}
+
 .prop-blog {
-  left: 14px;
-  top: 188px;
-  width: 78px;
-  height: 76px;
+  left: 52px;
+  width: 66px;
+  height: 52px;
+  transform: translateZ(214px);
+  z-index: 6;
 }
 
 .chart-art {
-  width: 68px;
-  height: 48px;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  width: 54px;
+  height: 40px;
+  transform-style: preserve-3d;
 }
 
-.blog-laptop {
-  width: 64px;
-  filter: drop-shadow(0 6px 4px rgba(90, 55, 30, 0.22));
-}
-
-.blog-laptop .lid {
-  height: 30px;
-  border-radius: 8px 8px 4px 4px;
-  background: linear-gradient(#3b4254, #1e2430);
-  padding: 4px;
-}
-
-.blog-laptop .lid i {
-  display: block;
-  height: 100%;
-  border-radius: 4px;
-  background: linear-gradient(#7dd3fc, #38bdf8);
-}
-
-.blog-laptop .base {
-  height: 8px;
-  margin-top: 2px;
-  border-radius: 0 0 8px 8px;
-  background: linear-gradient(#4b5563, #1f2937);
-}
-
-.chart-art.upgraded .lid i {
-  background: linear-gradient(#86efac, #22c55e);
-}
-
+/* Ящик — центр пола */
 .prop-box {
-  left: 120px;
-  top: 118px;
-  width: 70px;
+  left: 142px;
+  width: 62px;
   height: 50px;
+  transform: translateZ(152px);
+  z-index: 4;
 }
 
-.crate {
-  width: 50px;
-  height: 36px;
+.crate-box {
+  --w: 52px;
+  --h: 36px;
+  --d: 38px;
+}
+
+.crate-box .ft {
   background: linear-gradient(#e8b87a, #b45309);
-  border-radius: 10px;
-  box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.3), 0 6px 0 #78350f;
-  position: relative;
+  border-radius: 6px 0 0 6px;
 }
 
-.crate::after {
-  content: "";
+.crate-box .ft i {
   position: absolute;
-  right: -7px;
-  top: 6px;
-  width: 10px;
-  height: 30px;
-  background: #78350f;
-  border-radius: 0 8px 8px 0;
-}
-
-.crate i {
-  position: absolute;
-  inset: 8px;
+  inset: 7px;
   border: 3px solid rgba(120, 53, 15, 0.35);
-  border-radius: 6px;
+  border-radius: 4px;
 }
 
+.crate-box .sd {
+  background: #78350f;
+}
+
+.crate-box .tp {
+  background: linear-gradient(#e8c98a, #c08654);
+}
+
+/* ТВ у изножья кровати, чуть повёрнут в комнату */
 .prop-tv {
-  left: 170px;
-  top: 88px;
-  width: 72px;
-  height: 76px;
+  left: 232px;
+  width: 86px;
+  height: 80px;
+  transform: translateZ(118px) rotateY(16deg);
+  z-index: 3;
 }
 
 .tv.locked {
-  opacity: 0.4;
+  opacity: 0.42;
 }
 
-.tv-art {
-  width: 62px;
+.tv-3d {
   position: relative;
-  filter: drop-shadow(0 8px 4px rgba(90, 55, 30, 0.22));
+  width: 76px;
+  height: 64px;
+  transform-style: preserve-3d;
 }
 
-.ant {
+.tv-box {
+  --w: 68px;
+  --h: 42px;
+  --d: 26px;
   position: absolute;
-  left: 50%;
-  top: -10px;
-  width: 28px;
-  height: 14px;
-  transform: translateX(-50%);
-  background:
-    linear-gradient(115deg, transparent 46%, #7dd3fc 46% 54%, transparent 54%),
-    linear-gradient(65deg, transparent 46%, #7dd3fc 46% 54%, transparent 54%);
+  left: 4px;
+  bottom: 14px;
 }
 
-.tv-body {
-  height: 40px;
+.tv-box .ft {
   background: linear-gradient(#ffb347, #f59e0b 55%, #d97706);
-  border-radius: 16px;
-  padding: 6px 8px 6px 6px;
+  border-radius: 12px 0 0 12px;
+  padding: 6px;
   display: flex;
   gap: 4px;
-  box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.45), 0 6px 0 #b45309;
+  box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.4);
 }
 
 .tv-screen {
   flex: 1;
-  border-radius: 10px;
+  display: block;
+  border-radius: 8px;
   background: radial-gradient(circle at 30% 25%, #fff, #67e8f9 30%, #0e7490);
   box-shadow: inset 0 0 0 3px #334155;
 }
@@ -1157,18 +1439,59 @@
   background: radial-gradient(circle at 30% 30%, #fff, #7dd3fc);
 }
 
-.tv-legs {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 8px;
+.tv-box .sd {
+  background: linear-gradient(90deg, #b45309, #f59e0b);
 }
 
-.tv-legs i {
+.tv-box .tp {
+  background: linear-gradient(#ffb347, #d97706);
+}
+
+.tv-stand {
+  --w: 76px;
+  --h: 10px;
+  --d: 30px;
+  position: absolute;
+  left: 0;
+  bottom: 4px;
+}
+
+.tv-stand .ft {
+  background: linear-gradient(#c08654, #8b5530);
+  border-radius: 4px;
+}
+
+.tv-stand .sd {
+  background: #6f3f1c;
+}
+
+.tv-stand .tp {
+  background: #e8b87a;
+}
+
+.ant {
+  position: absolute;
+  left: 50%;
+  top: -4px;
+  width: 28px;
+  height: 14px;
+  transform: translateX(-50%) translateZ(8px);
+  background:
+    linear-gradient(115deg, transparent 46%, #7dd3fc 46% 54%, transparent 54%),
+    linear-gradient(65deg, transparent 46%, #7dd3fc 46% 54%, transparent 54%);
+}
+
+.tv-leg {
+  position: absolute;
+  bottom: 0;
   width: 8px;
   height: 8px;
   background: #c2410c;
   border-radius: 0 0 4px 4px;
 }
+
+.tv-leg.l { left: 14px; }
+.tv-leg.r { right: 14px; }
 
 .fridge,
 .plant {
@@ -1182,80 +1505,119 @@
   pointer-events: auto;
 }
 
+/* Холодильник у левой стены, между шкафом и столом */
 .prop-fridge {
-  left: 220px;
-  top: 140px;
-  width: 48px;
-  height: 80px;
+  left: 8px;
+  width: 46px;
+  height: 82px;
+  transform: translateZ(92px);
+  z-index: 3;
 }
 
-.fridge-art {
-  width: 30px;
-  height: 46px;
+.fridge-box {
+  --w: 36px;
+  --h: 70px;
+  --d: 30px;
+}
+
+.fridge-box .ft {
   background: linear-gradient(#fff, #e5e7eb);
-  border-radius: 10px;
-  box-shadow: inset -6px 0 0 #d1d5db, 0 6px 0 rgba(90, 55, 30, 0.15),
-    inset 0 4px 0 rgba(255, 255, 255, 0.8);
-  position: relative;
+  border-radius: 8px 0 0 8px;
+  box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.8);
 }
 
-.fridge-art i {
+.fridge-box .ft i {
   position: absolute;
   right: 6px;
-  top: 14px;
+  top: 16px;
   width: 4px;
-  height: 12px;
+  height: 14px;
   border-radius: 4px;
   background: #fbbf24;
 }
 
+.fridge-box .sd {
+  background: #cbd5e1;
+}
+
+.fridge-box .tp {
+  background: #f8fafc;
+}
+
+/* Растение у ТВ */
 .prop-plant {
-  left: 48px;
-  top: 78px;
-  width: 48px;
-  height: 50px;
+  left: 300px;
+  width: 44px;
+  height: 54px;
+  transform: translateZ(108px);
+  z-index: 3;
 }
 
-.plant-art {
-  width: 28px;
-  height: 40px;
+.plant-3d {
   position: relative;
+  width: 34px;
+  height: 46px;
+  transform-style: preserve-3d;
 }
 
-.plant-art i {
+.pot-side {
+  position: absolute;
+  left: 8px;
+  bottom: 0;
+  width: 18px;
+  height: 14px;
+  background: linear-gradient(#fff, #e5e7eb);
+  border-radius: 0 0 8px 8px;
+}
+
+.pot-sd {
+  position: absolute;
+  left: 26px;
+  bottom: 0;
+  width: 10px;
+  height: 14px;
+  background: #cbd5e1;
+  transform-origin: left center;
+  transform: rotateY(70deg);
+}
+
+.pot-top {
+  position: absolute;
+  left: 7px;
+  bottom: 12px;
+  width: 20px;
+  height: 9px;
+  border-radius: 50%;
+  background: #d6d3d1;
+  transform: rotateX(70deg);
+}
+
+.plant-3d i {
   position: absolute;
   border-radius: 50%;
   background: radial-gradient(circle at 30% 30%, #86efac, #16a34a);
-  box-shadow: 0 4px 0 rgba(22, 101, 52, 0.25);
 }
 
-.plant-art i:nth-child(1) {
+.plant-3d i:nth-of-type(1) {
   width: 16px;
   height: 16px;
   left: 0;
   top: 4px;
+  transform: translateZ(4px);
 }
-.plant-art i:nth-child(2) {
+.plant-3d i:nth-of-type(2) {
   width: 18px;
   height: 18px;
   right: 0;
   top: 0;
+  transform: translateZ(10px);
 }
-.plant-art i:nth-child(3) {
+.plant-3d i:nth-of-type(3) {
   width: 14px;
   height: 14px;
   left: 8px;
   top: 12px;
-}
-
-.plant-art b {
-  position: absolute;
-  left: 8px;
-  bottom: 0;
-  width: 12px;
-  height: 14px;
-  border-radius: 4px 4px 8px 8px;
-  background: linear-gradient(#fff, #e5e7eb);
+  transform: translateZ(2px);
 }
 
 .badge {
@@ -1268,6 +1630,7 @@
   padding: 4px 8px;
   border-radius: 999px;
   box-shadow: 0 3px 0 var(--red-dark, #b33333);
+  transform: translateZ(40px);
 }
 
 @media (orientation: landscape) and (max-height: 520px) {
