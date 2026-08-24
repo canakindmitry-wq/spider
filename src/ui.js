@@ -184,7 +184,9 @@ export function fitIsoRoom() {
   }
 
   const box = union(iso)
-  const scale = Math.min((w * 0.92) / Math.max(box.w, 1), (h * 0.86) / Math.max(box.h, 1), 1.45)
+  const wide = w >= 800
+  const cap = wide ? 2.45 : 1.45
+  const scale = Math.min((w * (wide ? 0.9 : 0.92)) / Math.max(box.w, 1), (h * (wide ? 0.9 : 0.86)) / Math.max(box.h, 1), cap)
   iso.style.setProperty('--iso-scale', String(Math.max(0.55, Math.round(scale * 1000) / 1000)))
   void iso.offsetWidth
 

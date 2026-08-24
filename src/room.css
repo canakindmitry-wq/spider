@@ -25,19 +25,20 @@
 .iso-stage {
   position: absolute;
   inset: 0;
-  perspective: 960px;
+  perspective: 1100px;
   perspective-origin: 50% 38%;
   overflow: visible;
   transform-style: preserve-3d;
 }
 
 .room-3d {
-  --rw: 340px;
-  --rd: 320px;
-  --rh: 220px;
+  --rw: 400px;
+  --rd: 380px;
+  --rh: 250px;
   --iso-scale: 1;
   --iso-x: 0px;
   --iso-y: 0px;
+  --wall-d: 18px;
   width: var(--rw);
   height: var(--rh);
   position: absolute;
@@ -146,6 +147,43 @@
   z-index: 2;
 }
 
+.wall-cap,
+.wall-lip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.face-back .wall-cap,
+.face-left .wall-cap {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: var(--wall-d, 18px);
+  transform-origin: top center;
+  transform: rotateX(90deg);
+  background: linear-gradient(#f3e6d0, #d4b07a 55%, #b08958);
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.45);
+}
+
+.face-back .wall-lip,
+.face-left .wall-lip {
+  top: 0;
+  left: 100%;
+  width: var(--wall-d, 18px);
+  height: 100%;
+  transform-origin: left center;
+  transform: rotateY(-90deg);
+}
+
+.face-back .wall-lip {
+  background: linear-gradient(90deg, #e2c9a4, #c08654);
+}
+
+.face-left .wall-lip {
+  background: linear-gradient(90deg, #d4b07a, #8b5530);
+}
+
 .fshade {
   position: absolute;
   border-radius: 50%;
@@ -241,7 +279,7 @@
   height: 118px;
   min-width: 72px;
   min-height: 96px;
-  transform: translateZ(14px);
+  transform: translateZ(20px);
 }
 
 .win-3d {
@@ -372,7 +410,7 @@
   left: 56%;
   top: 8%;
   width: 100px;
-  transform: translateZ(10px);
+  transform: translateZ(20px);
 }
 
 .wall-frames {
@@ -424,7 +462,7 @@
   left: 84%;
   top: 8%;
   width: 48px;
-  transform: translateZ(16px);
+  transform: translateZ(20px);
 }
 
 .trophy-3d {
@@ -494,7 +532,7 @@
   height: 22px;
   z-index: 1;
   pointer-events: none;
-  transform: translateZ(-10px);
+  transform: translateZ(10px);
   transform-style: preserve-3d;
 }
 
@@ -546,7 +584,7 @@
   z-index: 2;
   opacity: 1 !important;
   pointer-events: none;
-  transform: translateZ(-8px);
+  transform: translateZ(10px);
   transform-style: preserve-3d;
 }
 
@@ -604,7 +642,7 @@
 .deco.shelf {
   left: 48%;
   top: 46%;
-  transform: translateZ(-12px);
+  transform: translateZ(12px);
 }
 
 .shelf-art {
@@ -671,7 +709,7 @@
 .deco.lamp {
   left: 38%;
   top: 38%;
-  transform: translateZ(-14px);
+  transform: translateZ(14px);
 }
 
 .lamp-art {
@@ -739,7 +777,9 @@
 
 .solid .ft,
 .solid .sd,
-.solid .tp {
+.solid .tp,
+.solid .bk,
+.solid .lt {
   position: absolute;
   display: block;
   box-sizing: border-box;
@@ -772,43 +812,43 @@
   transform: rotateX(90deg);
 }
 
-/* Шкаф — левый задний угол */
+.solid .bk {
+  top: 0;
+  left: 0;
+  width: var(--w);
+  height: var(--h);
+  transform: rotateY(180deg);
+}
+
+.solid .lt {
+  top: 0;
+  left: 0;
+  width: var(--d);
+  height: var(--h);
+  transform-origin: left center;
+  transform: rotateY(-90deg);
+}
+
+/* Шкаф — открытые дверцы, костюм внутри */
 .prop-wardrobe {
-  left: 6px;
-  width: 86px;
-  height: 188px;
-  transform: translateZ(8px);
+  left: 8px;
+  width: 110px;
+  height: 200px;
+  transform: translateZ(10px);
 }
 
 .ward {
-  --w: 72px;
-  --h: 158px;
-  --d: 42px;
+  --w: 84px;
+  --h: 168px;
+  --d: 52px;
 }
 
-.ward .ft {
-  display: flex;
-  gap: 4px;
-  padding: 8px 6px;
-  background: linear-gradient(#5c3a1e, #3d2414);
-  border-radius: 4px 0 0 4px;
-}
-
-.ward .door {
-  flex: 1;
-  display: block;
-  background: linear-gradient(#f3e0b8, #e8c98a);
-  border-radius: 3px;
-  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.45);
-}
-
-.ward .mirror {
-  display: block;
-  margin: 10px 5px;
-  height: 74%;
-  border-radius: 4px;
-  background: linear-gradient(135deg, #e0f2fe, #7dd3fc 42%, #bae6fd);
-  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.7);
+.ward .ft.inner {
+  transform: none;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.18), transparent 30%),
+    linear-gradient(#6b2a22, #3a1410);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.35);
 }
 
 .ward .sd {
@@ -819,28 +859,91 @@
   background: linear-gradient(#8b5530, #6f3f1c);
 }
 
+.door-swing {
+  position: absolute;
+  top: 10px;
+  width: 38px;
+  height: calc(var(--h) - 18px);
+  transform-style: preserve-3d;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.door-swing.l {
+  left: 4px;
+  transform-origin: left center;
+  transform: translateZ(var(--d)) rotateY(-64deg);
+}
+
+.door-swing.r {
+  left: 42px;
+  transform-origin: right center;
+  transform: translateZ(var(--d)) rotateY(78deg);
+}
+
+.door-face {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(#f3e0b8, #e8c98a);
+  border-radius: 3px;
+  box-shadow: inset 0 3px 0 rgba(255, 255, 255, 0.45);
+}
+
+.door-swing.l .door-face {
+  background: linear-gradient(#f7e8c4, #e8c98a);
+}
+
+.door-edge {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  width: 8px;
+  height: 100%;
+  transform-origin: left center;
+  transform: rotateY(-90deg);
+  background: #c08654;
+}
+
+.door-swing.r .door-edge {
+  left: 0;
+  width: 8px;
+  transform-origin: left center;
+  transform: rotateY(90deg);
+  background: #8b5530;
+}
+
+.ward .mirror {
+  display: block;
+  margin: 12px 6px;
+  height: 72%;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #e0f2fe, #7dd3fc 42%, #bae6fd);
+  box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.7);
+}
+
 .hanger-bar {
   position: absolute;
-  left: 14px;
-  top: 14px;
-  width: 48px;
-  height: 6px;
+  left: 18px;
+  top: 18px;
+  width: 50px;
+  height: 7px;
   border-radius: 8px;
   background: linear-gradient(#e8d5b5, #a67c52);
-  transform: translateZ(22px);
-  z-index: 3;
+  transform: translateZ(28px);
+  z-index: 4;
   pointer-events: none;
 }
 
 .hanger-suit {
   position: absolute;
-  left: 8px;
-  top: 22px;
-  width: 64px;
-  height: 108px;
-  z-index: 4;
+  left: 12px;
+  top: 24px;
+  width: 72px;
+  height: 120px;
+  z-index: 5;
   pointer-events: none;
-  transform: translateZ(24px);
+  transform: translateZ(30px);
+  filter: drop-shadow(4px 6px 4px rgba(0, 0, 0, 0.35));
 }
 
 .hanger-suit svg {
@@ -861,10 +964,10 @@
 
 /* Гитара между шкафом и кроватью */
 .guitar {
-  left: 82px;
+  left: 108px;
   width: 28px;
   height: 78px;
-  transform: translateZ(28px) rotateY(18deg) rotateZ(-16deg);
+  transform: translateZ(30px) rotateY(18deg) rotateZ(-16deg);
   pointer-events: none;
 }
 
@@ -915,10 +1018,10 @@
 
 /* Кровать вдоль задней стены */
 .prop-bed {
-  left: 112px;
+  left: 132px;
   width: 216px;
   height: 78px;
-  transform: translateZ(10px);
+  transform: translateZ(12px);
 }
 
 .bed-art {
@@ -1375,12 +1478,12 @@
   background: linear-gradient(#e8c98a, #c08654);
 }
 
-/* ТВ у изножья кровати, чуть повёрнут в комнату */
+/* ТВ — объёмный кинескоп у изножья кровати */
 .prop-tv {
-  left: 232px;
-  width: 86px;
-  height: 80px;
-  transform: translateZ(118px) rotateY(16deg);
+  left: 228px;
+  width: 120px;
+  height: 108px;
+  transform: translateZ(108px) rotateY(22deg);
 }
 
 .tv.locked {
@@ -1389,53 +1492,78 @@
 
 .tv-3d {
   position: relative;
-  width: 76px;
-  height: 64px;
+  width: 108px;
+  height: 92px;
   transform-style: preserve-3d;
 }
 
 .tv-box {
-  --w: 68px;
-  --h: 44px;
-  --d: 34px;
+  --w: 96px;
+  --h: 60px;
+  --d: 64px;
   position: absolute;
-  left: 4px;
-  bottom: 14px;
+  left: 6px;
+  bottom: 16px;
 }
 
 .tv-box .ft {
   background: linear-gradient(#ffb347, #f59e0b 55%, #d97706);
-  border-radius: 12px 0 0 12px;
-  padding: 6px;
+  border-radius: 10px 0 0 10px;
+  padding: 7px 6px;
   display: flex;
-  gap: 4px;
+  gap: 5px;
   box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.4);
+  transform-style: preserve-3d;
 }
 
-.tv-screen {
+.tv-bezel {
   flex: 1;
   display: block;
   border-radius: 8px;
-  background: radial-gradient(circle at 30% 25%, #fff, #67e8f9 30%, #0e7490);
-  box-shadow: inset 0 0 0 3px #334155;
+  background: #1f2937;
+  padding: 5px;
+  transform: translateZ(-12px);
+  transform-style: preserve-3d;
+  box-shadow: inset 0 0 0 3px #111827;
+}
+
+.tv-screen {
+  display: block;
+  height: 100%;
+  min-height: 36px;
+  border-radius: 6px;
+  transform: translateZ(8px);
+  background:
+    radial-gradient(circle at 28% 24%, #fff 0 6px, transparent 8px),
+    radial-gradient(circle at 50% 40%, #67e8f9, #0e7490 62%, #083344);
+  box-shadow: inset 0 0 12px rgba(8, 47, 73, 0.45), 0 0 10px rgba(56, 189, 248, 0.35);
 }
 
 .knobs {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 3px;
+  gap: 4px;
 }
 
 .knobs i {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
   background: radial-gradient(circle at 30% 30%, #fff, #7dd3fc);
+  box-shadow: 0 0 0 2px #b45309;
 }
 
 .tv-box .sd {
-  background: linear-gradient(90deg, #b45309, #f59e0b);
+  background: linear-gradient(90deg, #9a3412, #f59e0b);
+}
+
+.tv-box .lt {
+  background: linear-gradient(90deg, #7c2d12, #c2410c);
+}
+
+.tv-box .bk {
+  background: #7c2d12;
 }
 
 .tv-box .tp {
@@ -1443,9 +1571,9 @@
 }
 
 .tv-stand {
-  --w: 76px;
-  --h: 10px;
-  --d: 30px;
+  --w: 108px;
+  --h: 12px;
+  --d: 48px;
   position: absolute;
   left: 0;
   bottom: 4px;
@@ -1466,27 +1594,35 @@
 
 .ant {
   position: absolute;
-  left: 50%;
-  top: -4px;
-  width: 28px;
-  height: 14px;
-  transform: translateX(-50%) translateZ(8px);
-  background:
-    linear-gradient(115deg, transparent 46%, #7dd3fc 46% 54%, transparent 54%),
-    linear-gradient(65deg, transparent 46%, #7dd3fc 46% 54%, transparent 54%);
+  top: 2px;
+  width: 4px;
+  height: 22px;
+  background: linear-gradient(#e2e8f0, #64748b);
+  border-radius: 2px;
+  transform-origin: bottom center;
+}
+
+.ant.l {
+  left: 40px;
+  transform: translateZ(40px) rotateZ(-28deg);
+}
+
+.ant.r {
+  left: 66px;
+  transform: translateZ(40px) rotateZ(32deg);
 }
 
 .tv-leg {
   position: absolute;
   bottom: 0;
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   background: #c2410c;
   border-radius: 0 0 4px 4px;
 }
 
-.tv-leg.l { left: 14px; }
-.tv-leg.r { right: 14px; }
+.tv-leg.l { left: 16px; }
+.tv-leg.r { right: 16px; }
 
 .fridge,
 .plant {
@@ -1624,6 +1760,19 @@
   border-radius: 999px;
   box-shadow: 0 3px 0 var(--red-dark, #b33333);
   transform: translateZ(40px);
+}
+
+@media (min-width: 800px) {
+  .iso-stage {
+    perspective: 1600px;
+    perspective-origin: 48% 42%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .iso-stage {
+    perspective: 1900px;
+  }
 }
 
 @media (orientation: landscape) and (max-height: 520px) {

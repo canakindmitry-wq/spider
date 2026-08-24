@@ -55,6 +55,8 @@
               </div>
 
               <div class="face-left">
+                <span class="wall-cap" aria-hidden="true"></span>
+                <span class="wall-lip" aria-hidden="true"></span>
                 <div class="wall-tone" aria-hidden="true"></div>
                 <div class="baseboard" aria-hidden="true"></div>
                 <div class="coat-rack" aria-hidden="true">
@@ -81,6 +83,8 @@
               </div>
 
               <div class="face-back">
+                <span class="wall-cap" aria-hidden="true"></span>
+                <span class="wall-lip" aria-hidden="true"></span>
                 <div class="wall-tone" aria-hidden="true"></div>
                 <div class="baseboard" aria-hidden="true"></div>
                 <div class="corner-join" aria-hidden="true"></div>
@@ -120,12 +124,17 @@
 
               <button type="button" class="hotspot prop prop-wardrobe" data-hot="costume" aria-label="Костюм">
                 <div class="solid ward" aria-hidden="true">
-                  <span class="ft">
-                    <i class="door l"><em class="mirror"></em></i>
-                    <i class="door r"></i>
-                  </span>
+                  <span class="ft inner"></span>
                   <span class="sd"></span>
                   <span class="tp"></span>
+                  <span class="door-swing l">
+                    <span class="door-face"><em class="mirror"></em></span>
+                    <span class="door-edge"></span>
+                  </span>
+                  <span class="door-swing r">
+                    <span class="door-face"></span>
+                    <span class="door-edge"></span>
+                  </span>
                 </div>
                 <span class="hanger-bar" aria-hidden="true"></span>
                 <div id="hanger-suit" class="hanger-suit"></div>
@@ -248,13 +257,18 @@
 
               <button type="button" id="hot-tv" class="hotspot prop tv locked prop-tv" data-hot="tv" aria-label="Телевизор">
                 <div class="tv-3d" aria-hidden="true">
-                  <span class="ant"></span>
+                  <span class="ant l"></span>
+                  <span class="ant r"></span>
                   <div class="solid tv-box">
                     <span class="ft">
-                      <em class="tv-screen"></em>
+                      <span class="tv-bezel">
+                        <em class="tv-screen"></em>
+                      </span>
                       <b class="knobs"><i></i><i></i><i></i></b>
                     </span>
                     <span class="sd"></span>
+                    <span class="lt"></span>
+                    <span class="bk"></span>
                     <span class="tp"></span>
                   </div>
                   <div class="solid tv-stand">

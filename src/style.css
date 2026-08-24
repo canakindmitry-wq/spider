@@ -53,6 +53,30 @@ button {
   box-shadow: 0 0 60px rgba(90, 55, 30, 0.2);
 }
 
+@media (min-width: 800px) {
+  html,
+  body {
+    background: #c4a070;
+  }
+
+  #app {
+    max-width: none;
+    width: 100%;
+    height: 100%;
+    box-shadow: none;
+  }
+
+  .splash-inner {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  .hud {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+
 .screen {
   position: absolute;
   inset: 0;
@@ -1044,10 +1068,3 @@ button {
   /* изометрия масштабируется в room.css */
 }
 
-@media (min-width: 700px) {
-  #app {
-    max-width: 640px;
-    border-left: 6px solid #c4a574;
-    border-right: 6px solid #c4a574;
-  }
-}
