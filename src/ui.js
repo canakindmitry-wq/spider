@@ -185,15 +185,15 @@ export function fitIsoRoom() {
 
   const box = union(iso)
   const wide = w >= 800
-  const cap = wide ? 2.45 : 1.45
-  const scale = Math.min((w * (wide ? 0.9 : 0.92)) / Math.max(box.w, 1), (h * (wide ? 0.9 : 0.86)) / Math.max(box.h, 1), cap)
+  const cap = wide ? 2.85 : 1.45
+  const scale = Math.min((w * (wide ? 0.95 : 0.92)) / Math.max(box.w, 1), (h * (wide ? 0.93 : 0.86)) / Math.max(box.h, 1), cap)
   iso.style.setProperty('--iso-scale', String(Math.max(0.55, Math.round(scale * 1000) / 1000)))
   void iso.offsetWidth
 
   const fitted = union(iso)
   const roomBox = room.getBoundingClientRect()
   const dx = roomBox.left + roomBox.width / 2 - (fitted.minX + fitted.maxX) / 2
-  const dy = roomBox.top + roomBox.height * 0.54 - (fitted.minY + fitted.maxY) / 2
+  const dy = roomBox.top + roomBox.height * (w >= 800 ? 0.5 : 0.54) - (fitted.minY + fitted.maxY) / 2
   iso.style.setProperty('--iso-x', `${Math.round(dx)}px`)
   iso.style.setProperty('--iso-y', `${Math.round(dy)}px`)
 }

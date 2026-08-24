@@ -38,7 +38,7 @@
   --iso-scale: 1;
   --iso-x: 0px;
   --iso-y: 0px;
-  --wall-d: 18px;
+  --wall-d: 28px;
   width: var(--rw);
   height: var(--rh);
   position: absolute;
@@ -67,10 +67,8 @@
   height: var(--rh);
   left: 0;
   top: 0;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.22), transparent 28%),
-    linear-gradient(#f8f1e4, #efe4d0);
-  box-shadow: inset 0 16px 22px rgba(255, 255, 255, 0.18);
+  background: linear-gradient(#e4c9a0, #c9a06e);
+  box-shadow: inset 0 16px 22px rgba(255, 255, 255, 0.12);
 }
 
 .face-left {
@@ -80,9 +78,7 @@
   top: 0;
   transform-origin: left center;
   transform: rotateY(-90deg);
-  background:
-    linear-gradient(90deg, rgba(90, 55, 30, 0.22), transparent 24%),
-    linear-gradient(#e4d2b4, #efe4d0 45%, #e8d8bc);
+  background: linear-gradient(#c9a06e, #a67c52);
   box-shadow: inset -10px 0 16px rgba(90, 55, 30, 0.12);
 }
 
@@ -126,6 +122,22 @@
   pointer-events: none;
 }
 
+.face-back .wall-tone,
+.face-left .wall-tone {
+  position: absolute;
+  inset: 0;
+  transform: translateZ(var(--wall-d, 28px));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28), transparent 28%),
+    linear-gradient(#f8f1e4, #efe4d0);
+}
+
+.face-left .wall-tone {
+  background:
+    linear-gradient(90deg, rgba(90, 55, 30, 0.18), transparent 24%),
+    linear-gradient(#e8d4b8, #efe4d0 45%, #eadcc4);
+}
+
 .face-back .baseboard,
 .face-left .baseboard {
   position: absolute;
@@ -135,6 +147,7 @@
   height: 10px;
   background: linear-gradient(#d7b48a, #c08654);
   box-shadow: 0 -6px 10px rgba(90, 55, 30, 0.12);
+  transform: translateZ(var(--wall-d, 28px));
 }
 
 .corner-join {
@@ -159,7 +172,7 @@
   left: 0;
   top: 0;
   width: 100%;
-  height: var(--wall-d, 18px);
+  height: var(--wall-d, 28px);
   transform-origin: top center;
   transform: rotateX(90deg);
   background: linear-gradient(#f3e6d0, #d4b07a 55%, #b08958);
@@ -170,7 +183,7 @@
 .face-left .wall-lip {
   top: 0;
   left: 100%;
-  width: var(--wall-d, 18px);
+  width: var(--wall-d, 28px);
   height: 100%;
   transform-origin: left center;
   transform: rotateY(-90deg);
@@ -279,7 +292,7 @@
   height: 118px;
   min-width: 72px;
   min-height: 96px;
-  transform: translateZ(20px);
+  transform: translateZ(32px);
 }
 
 .win-3d {
@@ -410,7 +423,7 @@
   left: 56%;
   top: 8%;
   width: 100px;
-  transform: translateZ(20px);
+  transform: translateZ(32px);
 }
 
 .wall-frames {
@@ -462,7 +475,7 @@
   left: 84%;
   top: 8%;
   width: 48px;
-  transform: translateZ(20px);
+  transform: translateZ(32px);
 }
 
 .trophy-3d {
@@ -532,7 +545,7 @@
   height: 22px;
   z-index: 1;
   pointer-events: none;
-  transform: translateZ(10px);
+  transform: translateZ(32px);
   transform-style: preserve-3d;
 }
 
@@ -584,7 +597,7 @@
   z-index: 2;
   opacity: 1 !important;
   pointer-events: none;
-  transform: translateZ(10px);
+  transform: translateZ(32px);
   transform-style: preserve-3d;
 }
 
@@ -642,7 +655,7 @@
 .deco.shelf {
   left: 48%;
   top: 46%;
-  transform: translateZ(12px);
+  transform: translateZ(32px);
 }
 
 .shelf-art {
@@ -709,7 +722,7 @@
 .deco.lamp {
   left: 38%;
   top: 38%;
-  transform: translateZ(14px);
+  transform: translateZ(32px);
 }
 
 .lamp-art {
@@ -872,13 +885,13 @@
 .door-swing.l {
   left: 4px;
   transform-origin: left center;
-  transform: translateZ(var(--d)) rotateY(-64deg);
+  transform: translateZ(var(--d)) rotateY(-82deg);
 }
 
 .door-swing.r {
   left: 42px;
   transform-origin: right center;
-  transform: translateZ(var(--d)) rotateY(78deg);
+  transform: translateZ(var(--d)) rotateY(102deg);
 }
 
 .door-face {
@@ -1483,7 +1496,7 @@
   left: 228px;
   width: 120px;
   height: 108px;
-  transform: translateZ(108px) rotateY(22deg);
+  transform: translateZ(108px) rotateY(38deg);
 }
 
 .tv.locked {
@@ -1500,7 +1513,7 @@
 .tv-box {
   --w: 96px;
   --h: 60px;
-  --d: 64px;
+  --d: 78px;
   position: absolute;
   left: 6px;
   bottom: 16px;
