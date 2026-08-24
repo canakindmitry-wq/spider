@@ -5,7 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="theme-color" content="#111118" />
+    <meta name="theme-color" content="#f3ead8" />
     <title>Симулятор Человека-паука</title>
   </head>
   <body>
@@ -14,7 +14,10 @@
       <section id="screen-splash" class="screen splash">
         <div class="web-bg"></div>
         <div class="splash-inner">
-          <div id="splash-spider" class="splash-spider" aria-hidden="true"></div>
+          <div class="splash-stage">
+            <div class="splash-block"></div>
+            <div id="splash-spider" class="splash-spider" aria-hidden="true"></div>
+          </div>
           <h1>Симулятор<br />Человека-паука</h1>
           <p class="tagline">Фотограф днём. Герой — всегда.</p>
           <button type="button" id="btn-play" class="btn btn-red btn-xl">Играть</button>
@@ -38,17 +41,14 @@
         </header>
 
         <div id="room" class="room">
-          <div class="neon-hexes" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-          <div class="neon-bolt-frame" aria-hidden="true"><span class="neon-bolt"></span></div>
-          <div class="speakers" aria-hidden="true"><i></i><i></i></div>
+          <div class="sunbeam" aria-hidden="true"></div>
           <div class="wall">
-            <div class="neon-bar neon-bar-h" aria-hidden="true"></div>
-            <div class="neon-bar neon-bar-l" aria-hidden="true"></div>
+            <div class="wall-shadow" aria-hidden="true"></div>
 
             <div class="poster-row deco poster" data-deco="poster">
               <div class="art-poster p-cat"><span>KEEP<br />CALM</span></div>
               <div class="art-poster p-city"></div>
-              <div class="art-poster p-out"><span>OUTLAWS</span></div>
+              <div class="art-poster p-out"><span>CITY</span></div>
             </div>
 
             <button type="button" class="hotspot wall-photos" data-hot="photos" aria-label="Стена с фото">
@@ -57,19 +57,32 @@
             </button>
 
             <button type="button" class="hotspot trophy" data-hot="achievements" aria-label="Достижения">
-              <div class="trophy-art"></div>
+              <div class="trophy-art"><i></i><b></b></div>
               <span class="label">Достижения</span>
             </button>
 
             <div class="deco shelf" data-deco="shelf">
-              <div class="shelf-art"><i></i><i></i><i></i><b></b></div>
+              <div class="shelf-art">
+                <span class="board"></span>
+                <i></i><i></i><i></i>
+                <b class="cube"></b>
+                <em class="frame-mini"></em>
+              </div>
             </div>
-            <div class="deco lamp" data-deco="lamp"><div class="lamp-art"></div></div>
+            <div class="deco lamp" data-deco="lamp">
+              <div class="lamp-art"><span class="glow"></span></div>
+            </div>
+
+            <div class="coat-rack" aria-hidden="true">
+              <span class="peg"></span><span class="peg"></span><span class="peg"></span>
+              <span class="robe"></span>
+            </div>
 
             <button type="button" class="hotspot window" data-hot="hero" aria-label="Работа супергероем">
               <div class="window-glass">
-                <div class="night-sky"></div>
-                <div class="rain"></div>
+                <div class="day-sky"></div>
+                <div class="cloud c1"></div>
+                <div class="cloud c2"></div>
                 <div class="mini-city"></div>
                 <div class="spidey-swing" id="window-spidey"></div>
               </div>
@@ -78,66 +91,89 @@
           </div>
 
           <div class="floor">
-            <div class="neon-under" aria-hidden="true"></div>
+            <div class="planks" aria-hidden="true"></div>
             <div class="deco carpet" data-deco="carpet"></div>
 
             <button type="button" class="hotspot hanger" data-hot="costume" aria-label="Костюм">
+              <div class="wardrobe-3d" aria-hidden="true">
+                <div class="w-side"></div>
+                <div class="w-front"></div>
+                <div class="w-mirror"></div>
+              </div>
               <div class="hanger-bar"></div>
               <div id="hanger-suit" class="hanger-suit"></div>
               <span id="costume-level-pip" class="pip">ур. 1</span>
               <span class="label" id="hanger-name">Костюм</span>
             </button>
 
-            <button type="button" class="hotspot bed" data-hot="shop" aria-label="Диван">
+            <button type="button" class="hotspot bed" data-hot="shop" aria-label="Кровать">
               <div class="bed-art" data-deco="bed">
-                <div class="sofa">
-                  <div class="sofa-back"></div>
-                  <div class="sofa-seat"></div>
-                  <div class="sofa-arm l"></div>
-                  <div class="sofa-arm r"></div>
+                <div class="bed-3d">
+                  <div class="bed-frame"></div>
+                  <div class="mattress"></div>
+                  <div class="duvet"></div>
+                  <div class="pillow"></div>
                 </div>
               </div>
               <span class="label">Комната</span>
             </button>
 
             <button type="button" class="hotspot chart" data-hot="passive" aria-label="Пассивный доход">
-              <div id="chart-obj" class="chart-art"><span class="bars"><i></i><i></i><i></i></span></div>
+              <div id="chart-obj" class="chart-art">
+                <div class="blog-laptop">
+                  <div class="lid"><i></i></div>
+                  <div class="base"></div>
+                </div>
+              </div>
               <span id="passive-level-pip" class="pip">ур. 1</span>
               <span class="label">Блог</span>
             </button>
 
             <button type="button" class="hotspot desk" data-hot="camera" aria-label="Камера">
-              <div class="cam-art"><i></i></div>
+              <div class="cam-art"><i></i><b></b></div>
               <span id="cam-level-pip" class="pip">ур. 1</span>
               <span class="label">Камера</span>
             </button>
 
             <button type="button" class="hotspot laptop" data-hot="photo" aria-label="Работа фотографом">
               <div class="desk-art">
-                <div class="chair"></div>
-                <div class="monitor"><div class="screen-glow"></div></div>
-                <div class="pc-tower"></div>
-                <div class="kb"></div>
-                <div class="pad"></div>
+                <div class="desk-top"></div>
+                <div class="desk-leg l"></div>
+                <div class="desk-leg r"></div>
+                <div class="chair-3d"><span></span></div>
+                <div class="toy-laptop">
+                  <div class="lid"><div class="screen-glow"></div></div>
+                  <div class="kb"></div>
+                </div>
+                <div class="mug"></div>
               </div>
               <span class="label">Фото</span>
             </button>
 
             <button type="button" class="hotspot box" data-hot="shop" aria-label="Магазин">
-              <div class="crate"></div>
+              <div class="crate"><i></i></div>
               <span class="label">Магазин</span>
             </button>
 
             <button type="button" class="hotspot fridge" data-hot="shop" aria-label="Холодильник" data-deco="fridge">
-              <div class="fridge-art"></div>
+              <div class="fridge-art"><i></i></div>
             </button>
 
             <button type="button" class="hotspot plant" data-hot="shop" aria-label="Растение" data-deco="plant">
-              <div class="plant-art"></div>
+              <div class="plant-art"><i></i><i></i><i></i><b></b></div>
             </button>
 
+            <div class="guitar" aria-hidden="true"></div>
+
             <button type="button" id="hot-tv" class="hotspot tv locked" data-hot="tv" aria-label="Телевизор">
-              <div class="tv-art"><div class="tv-screen"></div></div>
+              <div class="tv-art">
+                <div class="ant"></div>
+                <div class="tv-body">
+                  <div class="tv-screen"></div>
+                  <div class="knobs"><i></i><i></i><i></i></div>
+                </div>
+                <div class="tv-legs"><i></i><i></i></div>
+              </div>
               <span id="tv-badge" class="badge hidden">+200</span>
               <span class="label">ТВ</span>
             </button>
@@ -146,15 +182,19 @@
       </section>
 
       <!-- Фотограф -->
-      <section id="screen-photo" class="screen overlay hidden">
+      <section id="screen-photo" class="screen overlay toy-mini hidden">
         <div class="mini-top">
           <button type="button" id="btn-photo-exit" class="icon-btn">✕</button>
           <div class="mini-title">Съёмка</div>
           <div class="shots">Кадр <span id="photo-shots">0/3</span></div>
         </div>
         <p id="photo-subject-label" class="subject-label">Объект</p>
-        <p id="photo-hint" class="hint">Поймай объект в рамку</p>
+        <p id="photo-hint" class="hint">Нажми куда угодно, когда объект в рамке</p>
         <div id="photo-view" class="photo-view">
+          <div class="view-sky"></div>
+          <div class="view-city" aria-hidden="true">
+            <i></i><i></i><i></i><i></i><i></i><i></i>
+          </div>
           <div class="viewfinder-shade"></div>
           <div id="photo-frame" class="photo-frame"></div>
           <div id="photo-subject" class="photo-subject">🕷️</div>
@@ -165,7 +205,7 @@
       </section>
 
       <!-- Герой -->
-      <section id="screen-hero" class="screen overlay hidden">
+      <section id="screen-hero" class="screen overlay toy-mini hidden">
         <div class="mini-top">
           <button type="button" id="btn-hero-exit" class="icon-btn">✕</button>
           <div class="mini-title">Миссия</div>
@@ -234,7 +274,7 @@
           <div class="big-emoji">👋</div>
           <h2>Привет, Человек-паук!</h2>
           <p class="lead">Нажимай на предметы в комнате.</p>
-          <p class="card-sub">Монитор — фото. Окно — спасать город. Кнопка ₽ — костюмы за рубли.</p>
+          <p class="card-sub">Ноутбук — фото. Окно — спасать город. Кнопка ₽ — костюмы за рубли. Купленный костюм надевается сам.</p>
           <button type="button" id="tut-ok" class="btn btn-red btn-xl">Понятно!</button>
         </div>
       </div>

@@ -43,7 +43,7 @@ export function startPhotoGame({ onDone }) {
   }
 
   $('photo-shots').textContent = `0/${photoSession.totalShots}`
-  $('photo-hint').textContent = 'Поймай объект в рамку и нажми «Снять»'
+  $('photo-hint').textContent = 'Нажми куда угодно, когда объект в рамке'
   $('photo-subject-label').textContent = photoSession.subject.label
 
   const subjectEl = $('photo-subject')
@@ -67,18 +67,18 @@ function loopPhoto() {
   const w = view.clientWidth
   const h = view.clientHeight
   const pad = 48
-  photoSession.t += 0.016 * photoSession.speed * 1.35
+  photoSession.t += 0.016 * photoSession.speed * 1.05
 
   let x
   let y
   if (photoSession.pattern === 'horizontal') {
     x = pad + (Math.sin(photoSession.t) * 0.5 + 0.5) * (w - pad * 2)
-    y = h * 0.46 + Math.sin(photoSession.t * 1.7) * (h * 0.18)
+    y = h * 0.48 + Math.sin(photoSession.t * 1.4) * (h * 0.13)
   } else {
-    const rx = (w - pad * 2) * 0.38
-    const ry = (h - pad * 2) * 0.32
+    const rx = (w - pad * 2) * 0.28
+    const ry = (h - pad * 2) * 0.22
     x = w / 2 + Math.cos(photoSession.t) * rx
-    y = h / 2 + Math.sin(photoSession.t * 1.15) * ry
+    y = h / 2 + Math.sin(photoSession.t * 1.05) * ry
   }
 
   sub.style.left = `${x}px`
@@ -101,8 +101,8 @@ export function shootPhoto() {
     fr.left + fr.width / 2 - (sr.left + sr.width / 2),
     fr.top + fr.height / 2 - (sr.top + sr.height / 2),
   )
-  const perfectR = fr.width * 0.22
-  const mediumR = fr.width * 0.48
+  const perfectR = fr.width * 0.286
+  const mediumR = fr.width * 0.624
 
   let quality
   let base
@@ -257,7 +257,18 @@ function buildCityArt(space) {
   wrap.className = 'city-art'
   wrap.innerHTML = space
     ? `<div class="stars"></div><div class="planet"></div><div class="station"></div>`
-    : `<div class="skyline"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="moon"></div>`
+    : `<div class="toy-sky"></div>
+       <div class="sun-ball"></div>
+       <div class="cloud-h a"></div>
+       <div class="cloud-h b"></div>
+       <div class="iso-ground"></div>
+       <div class="bldg b1"><span class="roof"></span><span class="face"></span></div>
+       <div class="bldg b2"><span class="roof"></span><span class="face"></span></div>
+       <div class="bldg b3"><span class="roof"></span><span class="face"></span></div>
+       <div class="bldg b4"><span class="roof"></span><span class="face"></span></div>
+       <div class="bldg b5"><span class="roof"></span><span class="face"></span></div>
+       <div class="toy-tree t1"></div>
+       <div class="toy-tree t2"></div>`
   return wrap
 }
 

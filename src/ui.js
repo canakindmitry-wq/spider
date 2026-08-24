@@ -36,6 +36,10 @@ import {
   equippedSkinData,
   hangingPhotoBonusPercent,
   passivePerMin,
+  tvCooldownLeft,
+  formatCountdown,
+  maxPassiveBank,
+  TV_REWARD,
 } from './state.js'
 import { sfx, isMuted, setMuted, unlockAudio } from './audio.js'
 import { startPhotoGame, startHeroGame, shootPhoto, abortPhoto, abortHero } from './games.js'
@@ -123,7 +127,7 @@ export function renderRoom() {
   }
 
   $('hot-tv').classList.toggle('locked', !hasItem('tv'))
-  $('tv-badge').classList.toggle('hidden', !canWatchTv())
+  updateTvBadge()
 
   const chartObj = $('chart-obj')
   if (chartObj) chartObj.classList.toggle('upgraded', hasItem('laptop'))
@@ -159,6 +163,21 @@ function buyBtn(cost) {
   return `<button class="btn ${can ? 'btn-gold' : 'btn-ghost'}" data-cost="${cost}" ${can ? '' : 'disabled'}>${cost} 🪙</button>`
 }
 
+function updateTvBadge() {
+  const badge = $('tv-badge')
+  if (!badge) return
+  if (!hasItem('tv')) {
+    badge.classList.add('hidden')
+    return
+  }
+  badge.classList.remove('hidden')
+  if (canWatchTv()) {
+    badge.textContent = '+200'
+  } else {
+    badge.textContent = formatCountdown(tvCooldownLeft())
+  }
+}
+
 export function openCostume() {
   const c = costume()
   const next = COSTUME_LEVELS[state.costumeLevel + 1]
@@ -175,9 +194,9 @@ export function openCostume() {
     if (!owned) {
       action = buyBtn(s.cost).replace('data-cost', `data-act="buy-skin" data-id="${s.id}" data-cost`)
     } else if (on) {
-      action = `<button class="btn btn-ghost" data-act="unequip">Снять</button>`
+      action = `<span class="worn-tag">Надет</span>`
     } else {
-      action = `<button class="btn btn-red" data-act="equip" data-id="${s.id}">Надеть</button>`
+      action = `<span class="worn-tag dim">Куплено</span>`
     }
     return `<div class="card-row">${skinThumb(s)}<div class="grow"><div class="card-title">${s.name} ${on ? '• надет' : ''}</div><div class="card-sub">${s.desc}</div></div>${action}</div>`
   }).join('')
@@ -189,7 +208,7 @@ export function openCostume() {
      <p class="card-sub">Бонус геройства +${Math.round(c.heroBonus * 100)}% · слотов целей: ${c.slots}</p>
      ${upgrade}
      <h3 class="section-h">Скины за монеты</h3>
-     <p class="card-sub">Премиум-костюмы — кнопка «₽» вверху. Надет только один скин.</p>
+     <p class="card-sub">Премиум-костюмы — кнопка «₽» вверху. Купленный костюм надевается сам.</p>
      ${skinCards}`,
     { wide: true },
   )
@@ -215,7 +234,7 @@ export function openPassive() {
   const p = passive()
   const next = PASSIVE_LEVELS[state.passiveLevel + 1]
   const upgrade = next
-    ? `<div class="card-row"><div><div class="card-title">Улучшить до ${next.name}</div><div class="card-sub">${next.perMin} монет/мин · накопление ${next.maxHours} ч</div></div>${buyBtn(next.cost).replace('data-cost', 'data-act="up-passive" data-cost')}</div>`
+    ? `<div class="card-row"><div><div class="card-title">Улучшить до ${next.name}</div><div class="card-sub">${next.perMin} монет/мин · максимум ${maxPassiveBank(next)} 🪙</div></div>${buyBtn(next.cost).replace('data-cost', 'data-act="up-passive" data-cost')}</div>`
     : `<div class="card-row"><div class="card-title">Финансовая империя построена!</div></div>`
 
   openModal(
@@ -223,7 +242,7 @@ export function openPassive() {
     `<div class="big-emoji">📈</div>
      <p class="lead">Сейчас: <b>${p.name}</b> (ур. ${p.level}/10)</p>
      <p class="income-big">+${passivePerMin()} 🪙 / мин</p>
-     <p class="card-sub">Даже когда ты не в игре, Человек-паук ведёт блог. Максимум накопления: ${p.maxHours} ч.</p>
+     <p class="card-sub">Даже когда ты не в игре, Человек-паук ведёт блог. Максимум можно накопить: ${maxPassiveBank(p, passivePerMin())} 🪙</p>
      ${upgrade}`,
   )
 }
@@ -257,9 +276,9 @@ export function openPremium() {
     if (!owned) {
       action = `<button class="btn btn-pink" data-act="buy-paid" data-id="${s.id}">${s.priceRub} ₽</button>`
     } else if (on) {
-      action = `<button class="btn btn-ghost" data-act="unequip">Снять</button>`
+      action = `<span class="worn-tag">Надет</span>`
     } else {
-      action = `<button class="btn btn-red" data-act="equip" data-id="${s.id}">Надеть</button>`
+      action = `<span class="worn-tag dim">Куплено</span>`
     }
     return `<div class="card-row">${skinThumb(s)}<div class="grow"><div class="card-title">${s.name} ${on ? '• надет' : ''}</div><div class="card-sub">${s.desc}</div></div>${action}</div>`
   }).join('')
@@ -491,7 +510,10 @@ export function bindUI() {
   })
   $('modal-body').addEventListener('click', onModalClick)
 
-  $('btn-shoot').addEventListener('click', () => shootPhoto())
+  $('screen-photo').addEventListener('pointerdown', (e) => {
+    if (e.target.closest('#btn-photo-exit')) return
+    shootPhoto()
+  })
   $('btn-photo-exit').addEventListener('click', () => {
     sfx.tap()
     abortPhoto()
@@ -540,6 +562,7 @@ export function bindUI() {
 function startPassiveTicker() {
   setInterval(() => {
     if (!gameStarted) return
+    updateTvBadge()
     if (!$('screen-offline').classList.contains('hidden')) return
     const { coins, minutes } = collectPassiveCoins()
     if (coins > 0 && minutes > 0) {
@@ -587,7 +610,7 @@ async function watchTv() {
     return
   }
   if (!canWatchTv()) {
-    toast('Приходи завтра за бонусом!')
+    toast(`Телевизор отдохнёт ещё ${formatCountdown(tvCooldownLeft())}`)
     return
   }
   if (!state.adsDisabled) {
@@ -680,20 +703,6 @@ async function onModalClick(e) {
     renderRoom()
     openPremium()
     toast(`Скин «${skin.name}» надет`)
-  } else if (act === 'equip') {
-    state.equippedSkin = id
-    saveState()
-    sfx.tap()
-    renderRoom()
-    if ($('modal-title').textContent.includes('рубл')) openPremium()
-    else openCostume()
-  } else if (act === 'unequip') {
-    state.equippedSkin = null
-    saveState()
-    sfx.tap()
-    renderRoom()
-    if ($('modal-title').textContent.includes('рубл')) openPremium()
-    else openCostume()
   } else if (act === 'buy-noads') {
     const ok = await purchaseProduct(PREMIUM.disableAds.productId)
     if (!ok) {

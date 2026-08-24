@@ -283,7 +283,7 @@ export const ROOM_ITEMS = [
   { id: 'laptop', name: 'Новый ноутбук', emoji: '💻', cost: 400, desc: '+1 уровень пассивного дохода' },
   { id: 'poster', name: 'Постер на стену', emoji: '🖼️', cost: 100, desc: '+3% к доходу с фото' },
   { id: 'carpet', name: 'Ковёр', emoji: '🧶', cost: 120, desc: '+3% к доходу с геройства' },
-  { id: 'tv', name: 'Телевизор', emoji: '📺', cost: 300, desc: 'Раз в день +200 монет за рекламу' },
+  { id: 'tv', name: 'Телевизор', emoji: '📺', cost: 300, desc: 'Раз в 7 минут +200 монет за рекламу' },
   { id: 'lamp', name: 'Лампа', emoji: '💡', cost: 80, desc: '+2% к общему доходу' },
   { id: 'shelf', name: 'Полка для книг', emoji: '📚', cost: 180, desc: '+5% к пассивному доходу' },
   { id: 'fridge', name: 'Мини-холодильник', emoji: '🧊', cost: 220, desc: '+5% к общему доходу' },

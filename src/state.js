@@ -29,6 +29,7 @@ export function defaultState() {
     adsDisabled: false,
     lastVisit: Date.now(),
     lastTvDate: '',
+    lastTvAt: 0,
     lastInterstitialAt: 0,
     stats: {
       perfectShots: 0,
@@ -59,6 +60,9 @@ function normalizeState(parsed) {
   if (!Array.isArray(next.ownedPhotos)) next.ownedPhotos = []
   if (!next.roomItems || typeof next.roomItems !== 'object') next.roomItems = {}
   if (!next.achievements || typeof next.achievements !== 'object') next.achievements = {}
+  if (next.lastTvAt == null) {
+    next.lastTvAt = next.lastTvDate && next.lastTvDate === todayKey() ? Date.now() : 0
+  }
   return next
 }
 
@@ -254,18 +258,37 @@ export function touchLastVisit() {
   saveState()
 }
 
+export const TV_COOLDOWN_MS = 7 * 60 * 1000
+export const TV_REWARD = 200
+
 export function todayKey() {
   const d = new Date()
   return `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`
 }
 
+export function tvCooldownLeft() {
+  return Math.max(0, (Number(state.lastTvAt) || 0) + TV_COOLDOWN_MS - Date.now())
+}
+
 export function canWatchTv() {
-  return hasItem('tv') && state.lastTvDate !== todayKey()
+  return hasItem('tv') && tvCooldownLeft() === 0
 }
 
 export function markTvWatched() {
-  state.lastTvDate = todayKey()
+  state.lastTvAt = Date.now()
   saveState()
+}
+
+export function formatCountdown(ms) {
+  const total = Math.max(0, Math.ceil(ms / 1000))
+  const m = Math.floor(total / 60)
+  const s = total % 60
+  return `${m}:${String(s).padStart(2, '0')}`
+}
+
+export function maxPassiveBank(levelObj = passive(), perMin = null) {
+  const rate = perMin ?? levelObj.perMin
+  return Math.round(rate * levelObj.maxHours * 60)
 }
 
 export function nextCostumeCost() {
