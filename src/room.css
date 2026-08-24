@@ -4,9 +4,10 @@
   flex: 1;
   min-height: 0;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   background:
-    radial-gradient(circle at 78% 8%, #f7ecd4, #cbb48a 58%, #a88860);
+    radial-gradient(circle at 62% 42%, #e2cda8, #c4a574 62%, #a07c52);
+  transform-style: preserve-3d;
 }
 
 .sunbeam {
@@ -24,25 +25,27 @@
 .iso-stage {
   position: absolute;
   inset: 0;
-  perspective: 1100px;
-  perspective-origin: 48% 38%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+  perspective: 960px;
+  perspective-origin: 50% 38%;
+  overflow: visible;
+  transform-style: preserve-3d;
 }
 
 .room-3d {
-  --rw: 300px;
-  --rd: 280px;
-  --rh: 196px;
-  --iso-scale: 0.92;
+  --rw: 340px;
+  --rd: 320px;
+  --rh: 220px;
+  --iso-scale: 1;
+  --iso-x: 0px;
+  --iso-y: 0px;
   width: var(--rw);
   height: var(--rh);
-  position: relative;
+  position: absolute;
+  left: 44%;
+  bottom: 22%;
   transform-style: preserve-3d;
-  transform-origin: 50% 100%;
-  transform: rotateX(17deg) rotateY(34deg) scale(var(--iso-scale));
+  transform-origin: 0 100%;
+  transform: translate3d(var(--iso-x), var(--iso-y), 0) rotateX(-14deg) rotateY(-26deg) scale(var(--iso-scale));
 }
 
 .face-floor,
@@ -75,10 +78,11 @@
   left: 0;
   top: 0;
   transform-origin: left center;
-  transform: rotateY(90deg);
+  transform: rotateY(-90deg);
   background:
-    linear-gradient(90deg, rgba(90, 55, 30, 0.2), transparent 28%),
-    linear-gradient(#e8d7b8, #f3ead8 42%, #efe3cf);
+    linear-gradient(90deg, rgba(90, 55, 30, 0.22), transparent 24%),
+    linear-gradient(#e4d2b4, #efe4d0 45%, #e8d8bc);
+  box-shadow: inset -10px 0 16px rgba(90, 55, 30, 0.12);
 }
 
 .face-floor {
@@ -87,7 +91,9 @@
   left: 0;
   top: var(--rh);
   transform-origin: top left;
-  transform: rotateX(-90deg);
+  transform: rotateX(90deg);
+  overflow: visible;
+  pointer-events: none;
   background:
     repeating-linear-gradient(
       90deg,
@@ -225,6 +231,8 @@
   position: absolute;
   transform-style: preserve-3d;
   pointer-events: auto;
+  transform-origin: 50% 100%;
+  transform: rotateX(-90deg);
 }
 
 /* ===== Задняя стена: окно, фото, кубок ===== */
@@ -611,11 +619,10 @@
 
 /* ===== Мебель на полу ===== */
 .prop-wardrobe {
-  left: 8px;
-  top: 20px;
+  left: 10px;
+  top: 8px;
   width: 90px;
   height: 176px;
-  transform: translateZ(-34px);
 }
 
 .wardrobe-3d {
@@ -710,11 +717,10 @@
 }
 
 .prop-bed {
-  left: 116px;
-  top: 116px;
+  left: 118px;
+  top: 20px;
   width: 170px;
   height: 80px;
-  transform: translateZ(-46px);
 }
 
 .bed-art {
@@ -788,26 +794,25 @@
 }
 
 .guitar {
-  left: 96px;
-  top: 86px;
+  left: 98px;
+  top: 14px;
   width: 18px;
   height: 58px;
   background:
     radial-gradient(circle at 50% 72%, #c08654 0 10px, transparent 11px),
     linear-gradient(#e8b87a, #8b5530);
   border-radius: 8px;
-  transform: translateZ(-28px) rotateZ(-18deg);
+  transform: rotateX(-90deg) rotateZ(-18deg);
   pointer-events: none;
   z-index: 1;
   box-shadow: 0 6px 0 rgba(90, 55, 30, 0.12);
 }
 
 .prop-photo {
-  left: 4px;
-  top: 106px;
+  left: 8px;
+  top: 148px;
   width: 132px;
   height: 90px;
-  transform: translateZ(-204px);
 }
 
 .desk-3d {
@@ -976,11 +981,10 @@
 }
 
 .prop-cam {
-  left: 8px;
-  top: 100px;
+  left: 10px;
+  top: 118px;
   width: 68px;
   height: 74px;
-  transform: translateZ(-160px);
 }
 
 .cam-art {
@@ -1015,11 +1019,10 @@
 }
 
 .prop-blog {
-  left: 8px;
-  top: 96px;
+  left: 14px;
+  top: 188px;
   width: 78px;
   height: 76px;
-  transform: translateZ(-244px);
 }
 
 .chart-art {
@@ -1061,11 +1064,10 @@
 }
 
 .prop-box {
-  left: 118px;
-  top: 148px;
+  left: 120px;
+  top: 118px;
   width: 70px;
   height: 50px;
-  transform: translateZ(-152px);
 }
 
 .crate {
@@ -1096,11 +1098,10 @@
 }
 
 .prop-tv {
-  left: 168px;
-  top: 118px;
+  left: 170px;
+  top: 88px;
   width: 72px;
   height: 76px;
-  transform: translateZ(-118px);
 }
 
 .tv.locked {
@@ -1182,11 +1183,10 @@
 }
 
 .prop-fridge {
-  left: 216px;
-  top: 116px;
+  left: 220px;
+  top: 140px;
   width: 48px;
   height: 80px;
-  transform: translateZ(-190px);
 }
 
 .fridge-art {
@@ -1210,11 +1210,10 @@
 }
 
 .prop-plant {
-  left: 44px;
-  top: 148px;
+  left: 48px;
+  top: 78px;
   width: 48px;
   height: 50px;
-  transform: translateZ(-108px);
 }
 
 .plant-art {
@@ -1271,20 +1270,9 @@
   box-shadow: 0 3px 0 var(--red-dark, #b33333);
 }
 
-@media (max-width: 400px) {
-  .room-3d {
-    --iso-scale: 0.82;
-  }
-}
-
-@media (min-height: 740px) {
-  .room-3d {
-    --iso-scale: 1.05;
-  }
-}
-
 @media (orientation: landscape) and (max-height: 520px) {
   .room-3d {
-    transform: rotateX(14deg) rotateY(30deg) scale(var(--iso-scale, 0.78));
+    transform: translate3d(var(--iso-x, 0px), var(--iso-y, 0px), 0) rotateX(-12deg) rotateY(-24deg)
+      scale(var(--iso-scale, 0.85));
   }
 }

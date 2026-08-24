@@ -160,8 +160,39 @@ export function fitIsoRoom() {
   const w = room.clientWidth
   const h = room.clientHeight
   if (w < 40 || h < 40) return
-  const scale = Math.min(w / 520, h / 400, 1.28)
-  iso.style.setProperty('--iso-scale', String(Math.max(0.58, Math.round(scale * 1000) / 1000)))
+
+  iso.style.setProperty('--iso-scale', '1')
+  iso.style.setProperty('--iso-x', '0px')
+  iso.style.setProperty('--iso-y', '0px')
+  void iso.offsetWidth
+
+  const union = (root) => {
+    const faces = root.querySelectorAll('.face-floor, .face-left, .face-back')
+    let minX = Infinity
+    let minY = Infinity
+    let maxX = -Infinity
+    let maxY = -Infinity
+    faces.forEach((f) => {
+      const r = f.getBoundingClientRect()
+      minX = Math.min(minX, r.left)
+      minY = Math.min(minY, r.top)
+      maxX = Math.max(maxX, r.right)
+      maxY = Math.max(maxY, r.bottom)
+    })
+    return { minX, minY, maxX, maxY, w: maxX - minX, h: maxY - minY }
+  }
+
+  const box = union(iso)
+  const scale = Math.min((w * 0.92) / Math.max(box.w, 1), (h * 0.86) / Math.max(box.h, 1), 1.45)
+  iso.style.setProperty('--iso-scale', String(Math.max(0.55, Math.round(scale * 1000) / 1000)))
+  void iso.offsetWidth
+
+  const fitted = union(iso)
+  const roomBox = room.getBoundingClientRect()
+  const dx = roomBox.left + roomBox.width / 2 - (fitted.minX + fitted.maxX) / 2
+  const dy = roomBox.top + roomBox.height * 0.54 - (fitted.minY + fitted.maxY) / 2
+  iso.style.setProperty('--iso-x', `${Math.round(dx)}px`)
+  iso.style.setProperty('--iso-y', `${Math.round(dy)}px`)
 }
 
 function openModal(title, html, { wide = false } = {}) {
