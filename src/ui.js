@@ -40,6 +40,9 @@ import {
 import { sfx, isMuted, setMuted, unlockAudio } from './audio.js'
 import { startPhotoGame, startHeroGame, shootPhoto, abortPhoto, abortHero } from './games.js'
 import { showRewarded, showInterstitial, purchaseProduct, gameplayStart } from './yandex.js'
+import { spiderSVG } from './chibi.js'
+
+export { spiderSVG }
 
 const $ = (id) => document.getElementById(id)
 
@@ -51,31 +54,8 @@ let showingAchievement = false
 let uiBound = false
 let gameStarted = false
 
-export function spiderSVG(colors, { rainbow = false, torn = false } = {}) {
-  const cls = rainbow ? 'spider-svg rainbow-suit' : 'spider-svg'
-  const holes = torn
-    ? `<circle cx="28" cy="58" r="4" fill="#7f1d1d"/><circle cx="50" cy="70" r="3.5" fill="#7f1d1d"/>`
-    : ''
-  return `
-  <svg class="${cls}" viewBox="0 0 80 110" aria-hidden="true">
-    <ellipse cx="40" cy="104" rx="18" ry="4" fill="rgba(0,0,0,.2)"/>
-    <path d="M18 48 C4 38 2 22 10 18" stroke="${colors.accent}" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M62 48 C76 38 78 22 70 18" stroke="${colors.accent}" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M16 62 C2 62 0 78 8 86" stroke="${colors.accent}" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M64 62 C78 62 80 78 72 86" stroke="${colors.accent}" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M22 78 C10 90 12 102 22 104" stroke="${colors.accent}" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M58 78 C70 90 68 102 58 104" stroke="${colors.accent}" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <ellipse cx="40" cy="58" rx="20" ry="26" fill="${colors.body}"/>
-    <ellipse cx="40" cy="24" rx="16" ry="15" fill="${colors.body}"/>
-    <ellipse cx="33" cy="24" rx="6.5" ry="9" fill="#fff"/>
-    <ellipse cx="47" cy="24" rx="6.5" ry="9" fill="#fff"/>
-    <ellipse cx="34" cy="26" rx="2.2" ry="3" fill="#111"/>
-    <ellipse cx="46" cy="26" rx="2.2" ry="3" fill="#111"/>
-    <path d="M40 46 L40 74 M28 54 Q40 62 52 54 M30 64 Q40 72 50 64" stroke="${colors.accent}" stroke-width="2.2" fill="none"/>
-    <circle cx="40" cy="52" r="5" fill="${colors.accent}"/>
-    ${holes}
-    <circle cx="40" cy="52" r="10" fill="none" stroke="${colors.glow}" stroke-width="2" opacity="0.7"/>
-  </svg>`
+function skinThumb(skin) {
+  return `<div class="skin-ico chibi">${spiderSVG(skin.colors, { rainbow: skin.rainbow })}</div>`
 }
 
 export function renderHud() {
@@ -130,6 +110,8 @@ export function renderRoom() {
     rainbow: rain,
     torn: state.costumeLevel === 1 && !state.equippedSkin,
   })
+  const winSpidey = $('window-spidey')
+  if (winSpidey) winSpidey.innerHTML = spiderSVG(pal, { rainbow: rain })
   $('hanger-name').textContent = state.equippedSkin
     ? getSkinById(state.equippedSkin)?.name || costume().name
     : costume().name
@@ -144,7 +126,7 @@ export function renderRoom() {
   $('tv-badge').classList.toggle('hidden', !canWatchTv())
 
   const chartObj = $('chart-obj')
-  if (chartObj) chartObj.textContent = hasItem('laptop') ? '💻' : '📊'
+  if (chartObj) chartObj.classList.toggle('upgraded', hasItem('laptop'))
 
   $('wall-frames').innerHTML = state.hangingPhotos
     .map((id, i) => {
@@ -186,24 +168,19 @@ export function openCostume() {
     ? `<div class="card-row"><div><div class="card-title">Улучшить до ${next.name}</div><div class="card-sub">Геройство +${Math.round(next.heroBonus * 100)}% · смена ${next.duration}с</div></div>${buyBtn(next.cost).replace('data-cost', 'data-act="up-costume" data-cost')}</div>`
     : `<div class="card-row"><div class="card-title">Костюм полностью улучшен!</div></div>`
 
-  const skinCards = [...COIN_SKINS, ...PAID_SKINS]
-    .map((s) => {
-      const owned = state.ownedSkins.includes(s.id)
-      const on = state.equippedSkin === s.id
-      const paid = Boolean(s.priceRub)
-      let action
-      if (!owned && paid) {
-        action = `<button class="btn btn-blue" data-act="buy-paid" data-id="${s.id}">${s.priceRub} ₽</button>`
-      } else if (!owned) {
-        action = buyBtn(s.cost).replace('data-cost', `data-act="buy-skin" data-id="${s.id}" data-cost`)
-      } else if (on) {
-        action = `<button class="btn btn-ghost" data-act="unequip">Снять</button>`
-      } else {
-        action = `<button class="btn btn-red" data-act="equip" data-id="${s.id}">Надеть</button>`
-      }
-      return `<div class="card-row"><div class="skin-ico">${s.emoji}</div><div class="grow"><div class="card-title">${s.name} ${on ? '• надет' : ''}</div><div class="card-sub">${s.desc}</div></div>${action}</div>`
-    })
-    .join('')
+  const skinCards = COIN_SKINS.map((s) => {
+    const owned = state.ownedSkins.includes(s.id)
+    const on = state.equippedSkin === s.id
+    let action
+    if (!owned) {
+      action = buyBtn(s.cost).replace('data-cost', `data-act="buy-skin" data-id="${s.id}" data-cost`)
+    } else if (on) {
+      action = `<button class="btn btn-ghost" data-act="unequip">Снять</button>`
+    } else {
+      action = `<button class="btn btn-red" data-act="equip" data-id="${s.id}">Надеть</button>`
+    }
+    return `<div class="card-row">${skinThumb(s)}<div class="grow"><div class="card-title">${s.name} ${on ? '• надет' : ''}</div><div class="card-sub">${s.desc}</div></div>${action}</div>`
+  }).join('')
 
   openModal(
     'Костюм',
@@ -211,8 +188,8 @@ export function openCostume() {
      <p class="lead">Сейчас: <b>${c.name}</b> (ур. ${c.level}/10)</p>
      <p class="card-sub">Бонус геройства +${Math.round(c.heroBonus * 100)}% · слотов целей: ${c.slots}</p>
      ${upgrade}
-     <h3 class="section-h">Скины</h3>
-     <p class="card-sub">Одновременно надет только один скин.</p>
+     <h3 class="section-h">Скины за монеты</h3>
+     <p class="card-sub">Премиум-костюмы — кнопка «₽» вверху. Надет только один скин.</p>
      ${skinCards}`,
     { wide: true },
   )
@@ -246,7 +223,7 @@ export function openPassive() {
     `<div class="big-emoji">📈</div>
      <p class="lead">Сейчас: <b>${p.name}</b> (ур. ${p.level}/10)</p>
      <p class="income-big">+${passivePerMin()} 🪙 / мин</p>
-     <p class="card-sub">Даже когда ты не в игре, Питер ведёт блог. Максимум накопления: ${p.maxHours} ч.</p>
+     <p class="card-sub">Даже когда ты не в игре, Человек-паук ведёт блог. Максимум накопления: ${p.maxHours} ч.</p>
      ${upgrade}`,
   )
 }
@@ -261,13 +238,37 @@ export function openShop() {
     }</div>`
   }).join('')
 
-  const ads = state.adsDisabled
-    ? `<div class="card-row"><div class="grow"><div class="card-title">Реклама отключена</div><div class="card-sub">Удвоение после смены — бесплатно 1 раз</div></div></div>`
-    : `<div class="card-row"><div class="skin-ico">🚫</div><div class="grow"><div class="card-title">${PREMIUM.disableAds.name}</div><div class="card-sub">Убирает кнопки рекламы. Удвоение смены — бесплатно.</div></div><button class="btn btn-blue" data-act="buy-noads">${PREMIUM.disableAds.priceRub} ₽</button></div>`
-
   openModal(
     'Магазин комнаты',
-    `<p class="card-sub">Предметы остаются навсегда и сразу появляются в комнате.</p>${rows}<h3 class="section-h">Премиум</h3>${ads}`,
+    `<p class="card-sub">Предметы остаются навсегда и сразу появляются в комнате. Покупки за рубли — кнопка «₽».</p>${rows}`,
+    { wide: true },
+  )
+}
+
+export function openPremium() {
+  const ads = state.adsDisabled
+    ? `<div class="card-row"><div class="skin-ico">✅</div><div class="grow"><div class="card-title">Реклама отключена</div><div class="card-sub">Удвоение после смены — бесплатно 1 раз</div></div></div>`
+    : `<div class="card-row"><div class="skin-ico">🚫</div><div class="grow"><div class="card-title">${PREMIUM.disableAds.name}</div><div class="card-sub">Убирает рекламу. Удвоение смены — бесплатно.</div></div><button class="btn btn-pink" data-act="buy-noads">${PREMIUM.disableAds.priceRub} ₽</button></div>`
+
+  const skins = PAID_SKINS.map((s) => {
+    const owned = state.ownedSkins.includes(s.id)
+    const on = state.equippedSkin === s.id
+    let action
+    if (!owned) {
+      action = `<button class="btn btn-pink" data-act="buy-paid" data-id="${s.id}">${s.priceRub} ₽</button>`
+    } else if (on) {
+      action = `<button class="btn btn-ghost" data-act="unequip">Снять</button>`
+    } else {
+      action = `<button class="btn btn-red" data-act="equip" data-id="${s.id}">Надеть</button>`
+    }
+    return `<div class="card-row">${skinThumb(s)}<div class="grow"><div class="card-title">${s.name} ${on ? '• надет' : ''}</div><div class="card-sub">${s.desc}</div></div>${action}</div>`
+  }).join('')
+
+  openModal(
+    'Покупки за рубли',
+    `<p class="card-sub">Реальные покупки в Яндекс Играх. Локально — тестовый режим.</p>
+     <h3 class="section-h">Премиум</h3>${ads}
+     <h3 class="section-h">Костюмы</h3>${skins}`,
     { wide: true },
   )
 }
@@ -304,11 +305,12 @@ export function openHelp() {
   openModal(
     'Как играть',
     `<ol class="help-list">
-      <li>Нажми <b>ноутбук</b> — снимай фото для газеты.</li>
-      <li>Нажми <b>окно</b> — спасай город как герой.</li>
+      <li>Нажми <b>монитор</b> — снимай фото для газеты.</li>
+      <li>Нажми <b>окно</b> — спасай город как Человек-паук.</li>
       <li>Монеты трать на костюм, камеру, блог и вещи.</li>
       <li>Редкие кадры вешай на стену — они дают бонус.</li>
-      <li>Питер зарабатывает сам, даже когда ты ушёл.</li>
+      <li>Костюмы за рубли — отдельная кнопка <b>₽</b> вверху.</li>
+      <li>Человек-паук зарабатывает сам, даже когда ты ушёл.</li>
     </ol>
     <p class="card-sub">Энергии нет: играй сколько хочешь!</p>`,
   )
@@ -441,6 +443,10 @@ export function bindUI() {
   uiBound = true
 
   document.body.addEventListener('pointerdown', () => unlockAudio(), { once: true })
+  const splashHero = $('splash-spider')
+  if (splashHero && !splashHero.querySelector('svg')) {
+    splashHero.innerHTML = spiderSVG({ body: '#e11d48', accent: '#2563eb', glow: '#fbbf24' })
+  }
 
   $('btn-play').addEventListener('click', () => {
     sfx.tap()
@@ -454,6 +460,10 @@ export function bindUI() {
   $('btn-help').addEventListener('click', () => {
     sfx.tap()
     openHelp()
+  })
+  $('btn-premium').addEventListener('click', () => {
+    sfx.tap()
+    openPremium()
   })
 
   $('room').addEventListener('click', (e) => {
@@ -668,20 +678,22 @@ async function onModalClick(e) {
     sfx.upgrade()
     afterCoins(checkAchievements())
     renderRoom()
-    openCostume()
+    openPremium()
     toast(`Скин «${skin.name}» надет`)
   } else if (act === 'equip') {
     state.equippedSkin = id
     saveState()
     sfx.tap()
     renderRoom()
-    openCostume()
+    if ($('modal-title').textContent.includes('рубл')) openPremium()
+    else openCostume()
   } else if (act === 'unequip') {
     state.equippedSkin = null
     saveState()
     sfx.tap()
     renderRoom()
-    openCostume()
+    if ($('modal-title').textContent.includes('рубл')) openPremium()
+    else openCostume()
   } else if (act === 'buy-noads') {
     const ok = await purchaseProduct(PREMIUM.disableAds.productId)
     if (!ok) {
@@ -692,7 +704,7 @@ async function onModalClick(e) {
     saveState()
     sfx.upgrade()
     toast('Реклама отключена')
-    openShop()
+    openPremium()
   } else if (act === 'hang') {
     hangPhoto(id)
     sfx.tap()

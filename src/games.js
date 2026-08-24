@@ -7,6 +7,7 @@ import { PHOTO_SUBJECTS, PHOTOS } from './data.js'
 import { state, camera, costume, bonuses, photoIncome, heroIncome } from './state.js'
 import { sfx } from './audio.js'
 import { gameplayStart, gameplayStop } from './yandex.js'
+import { spiderSVG } from './chibi.js'
 
 let photoRaf = 0
 let heroTimer = 0
@@ -46,11 +47,10 @@ export function startPhotoGame({ onDone }) {
   $('photo-subject-label').textContent = photoSession.subject.label
 
   const subjectEl = $('photo-subject')
-  subjectEl.textContent = photoSession.subject.emoji
-  subjectEl.style.background = photoSession.subject.color
+  paintPhotoSubject(subjectEl, photoSession.subject)
   subjectEl.classList.toggle('contrast', photoSession.contrast)
 
-  const size = Math.round(118 * cam.frameScale)
+  const size = Math.round(118 * (cam.frameScale || 1))
   $('photo-frame').style.width = `${size}px`
   $('photo-frame').style.height = `${size}px`
 
@@ -141,9 +141,20 @@ export function shootPhoto() {
   photoSession.subject = pick(PHOTO_SUBJECTS)
   photoSession.pattern = Math.random() < 0.5 ? 'horizontal' : 'circle'
   photoSession.t = Math.random() * 8
-  sub.textContent = photoSession.subject.emoji
-  sub.style.background = photoSession.subject.color
+  paintPhotoSubject(sub, photoSession.subject)
   $('photo-subject-label').textContent = photoSession.subject.label
+}
+
+function paintPhotoSubject(el, subject) {
+  if (subject.id === 'hero') {
+    el.innerHTML = spiderSVG({ body: '#e11d48', accent: '#2563eb', glow: '#ff2bd6' })
+    el.style.background = 'transparent'
+    el.classList.add('chibi-sub')
+  } else {
+    el.textContent = subject.emoji
+    el.style.background = subject.color
+    el.classList.remove('chibi-sub')
+  }
 }
 
 function flashQuality(quality, coins) {
