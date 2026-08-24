@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#1d4ed8" />
+    <title>Симулятор Человека-паука</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- Старт -->
+      <section id="screen-splash" class="screen splash">
+        <div class="web-bg"></div>
+        <div class="splash-inner">
+          <div class="splash-spider" aria-hidden="true">🕷️</div>
+          <h1>Симулятор<br />Человека-паука</h1>
+          <p class="tagline">Фотограф днём. Герой — всегда.</p>
+          <button type="button" id="btn-play" class="btn btn-red btn-xl">Играть</button>
+          <p class="splash-hint">Только касания и клики · для детей 6–12</p>
+        </div>
+      </section>
+
+      <!-- Комната -->
+      <section id="screen-game" class="screen hidden">
+        <header class="hud">
+          <div id="hud-coins-wrap" class="coins-chip">
+            <span class="coin-ico">🪙</span>
+            <span id="hud-coins">0</span>
+          </div>
+          <div class="passive-chip" title="Пассивный доход">
+            📈 <span id="hud-passive">+1/мин</span>
+          </div>
+          <button type="button" id="btn-help" class="icon-btn" aria-label="Как играть">❓</button>
+          <button type="button" id="btn-mute" class="icon-btn" aria-label="Звук">🔊</button>
+        </header>
+
+        <div id="room" class="room">
+          <div class="wall">
+            <button type="button" class="hotspot wall-photos" data-hot="photos" aria-label="Стена с фото">
+              <div id="wall-frames" class="wall-frames"></div>
+              <span class="label">Стена</span>
+            </button>
+
+            <button type="button" class="hotspot trophy" data-hot="achievements" aria-label="Достижения">
+              <span class="obj">🏆</span>
+              <span class="label">Кубки</span>
+            </button>
+
+            <div class="deco poster" data-deco="poster">🖼️</div>
+            <div class="deco shelf" data-deco="shelf">📚</div>
+            <div class="deco lamp" data-deco="lamp">💡</div>
+
+            <button type="button" class="hotspot window" data-hot="hero" aria-label="Работа супергероем">
+              <div class="window-glass">
+                <div class="mini-city"></div>
+                <div class="spidey-swing">🕷️</div>
+              </div>
+              <span class="label">Герой</span>
+            </button>
+          </div>
+
+          <div class="floor">
+            <div class="deco carpet" data-deco="carpet"></div>
+
+            <button type="button" class="hotspot hanger" data-hot="costume" aria-label="Костюм">
+              <div class="hanger-bar"></div>
+              <div id="hanger-suit" class="hanger-suit"></div>
+              <span id="costume-level-pip" class="pip">ур. 1</span>
+              <span class="label" id="hanger-name">Костюм</span>
+            </button>
+
+            <button type="button" class="hotspot bed" data-hot="shop" aria-label="Кровать">
+              <div class="bed-art" data-deco="bed">
+                <div class="bed-frame"></div>
+                <div class="pillow"></div>
+              </div>
+              <span class="label">Комната</span>
+            </button>
+
+            <button type="button" class="hotspot chart" data-hot="passive" aria-label="Пассивный доход">
+              <span class="obj">📊</span>
+              <span id="passive-level-pip" class="pip">ур. 1</span>
+              <span class="label">Блог</span>
+            </button>
+
+            <button type="button" class="hotspot desk" data-hot="camera" aria-label="Камера">
+              <span class="obj">📷</span>
+              <span id="cam-level-pip" class="pip">ур. 1</span>
+              <span class="label">Камера</span>
+            </button>
+
+            <button type="button" class="hotspot laptop" data-hot="photo" aria-label="Работа фотографом">
+              <div class="laptop-art">
+                <div class="lid">📰</div>
+                <div class="kb"></div>
+              </div>
+              <span class="label">Фото</span>
+            </button>
+
+            <button type="button" class="hotspot box" data-hot="shop" aria-label="Магазин">
+              <span class="obj">📦</span>
+              <span class="label">Магазин</span>
+            </button>
+
+            <button type="button" class="hotspot fridge" data-hot="shop" aria-label="Холодильник" data-deco="fridge">
+              <span class="obj">🧊</span>
+            </button>
+
+            <button type="button" class="hotspot plant" data-hot="shop" aria-label="Растение" data-deco="plant">
+              <span class="obj">🪴</span>
+            </button>
+
+            <button type="button" id="hot-tv" class="hotspot tv locked" data-hot="tv" aria-label="Телевизор">
+              <span class="obj">📺</span>
+              <span id="tv-badge" class="badge hidden">+200</span>
+              <span class="label">ТВ</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Фотограф -->
+      <section id="screen-photo" class="screen overlay hidden">
+        <div class="mini-top">
+          <button type="button" id="btn-photo-exit" class="icon-btn">✕</button>
+          <div class="mini-title">Съёмка</div>
+          <div class="shots">Кадр <span id="photo-shots">0/3</span></div>
+        </div>
+        <p id="photo-subject-label" class="subject-label">Объект</p>
+        <p id="photo-hint" class="hint">Поймай объект в рамку</p>
+        <div id="photo-view" class="photo-view">
+          <div class="viewfinder-shade"></div>
+          <div id="photo-frame" class="photo-frame"></div>
+          <div id="photo-subject" class="photo-subject">🕷️</div>
+          <div id="photo-flash" class="photo-flash"></div>
+          <div id="photo-quality" class="quality-pop hidden"></div>
+        </div>
+        <button type="button" id="btn-shoot" class="btn-shoot">Снять</button>
+      </section>
+
+      <!-- Герой -->
+      <section id="screen-hero" class="screen overlay hidden">
+        <div class="mini-top">
+          <button type="button" id="btn-hero-exit" class="icon-btn">✕</button>
+          <div class="mini-title">Миссия</div>
+          <div class="shots">🪙 <span id="hero-score">0</span></div>
+        </div>
+        <div class="time-wrap">
+          <div class="time-bar"><i id="hero-timebar"></i></div>
+          <span id="hero-time">15с</span>
+        </div>
+        <p class="hint">Нажимай на жителей 😊 и злодеев 😈</p>
+        <div id="hero-city" class="hero-city"></div>
+      </section>
+
+      <!-- Итог смены -->
+      <section id="screen-result" class="screen overlay hidden">
+        <div class="panel">
+          <h2 id="result-title">Итог смены</h2>
+          <div id="result-coins" class="income-big">+0</div>
+          <ul id="result-list" class="feat"></ul>
+          <div id="result-rare" class="rare-card hidden"></div>
+          <button type="button" id="btn-hang-new" class="btn btn-blue hidden">Повесить на стену</button>
+          <button type="button" id="btn-double" class="btn btn-gold">Удвоить за рекламу</button>
+          <button type="button" id="btn-result-ok" class="btn btn-red btn-xl">В комнату</button>
+        </div>
+      </section>
+
+      <!-- Офлайн -->
+      <section id="screen-offline" class="screen overlay hidden">
+        <div class="panel">
+          <div class="big-emoji">😴➡️🕷️</div>
+          <h2>Питер поработал!</h2>
+          <div id="offline-coins" class="income-big">+0</div>
+          <p id="offline-min" class="card-sub">пока тебя не было</p>
+          <button type="button" id="btn-offline-extra" class="btn btn-gold">Ещё +50% за рекламу</button>
+          <button type="button" id="btn-offline-take" class="btn btn-red btn-xl">Забрать</button>
+        </div>
+      </section>
+
+      <!-- Модалка -->
+      <div id="modal" class="modal hidden">
+        <div id="modal-card" class="panel modal-card">
+          <div class="modal-head">
+            <h2 id="modal-title">Панель</h2>
+            <button type="button" id="modal-close" class="icon-btn">✕</button>
+          </div>
+          <div id="modal-body" class="modal-body"></div>
+        </div>
+      </div>
+
+      <!-- Достижение -->
+      <div id="achievement-pop" class="modal hidden">
+        <div class="panel pop-card">
+          <div class="big-emoji" id="ach-pop-emoji">🏆</div>
+          <h2>Достижение!</h2>
+          <p class="lead" id="ach-pop-name">Название</p>
+          <p class="income-big" id="ach-pop-reward">+0</p>
+          <button type="button" id="ach-pop-ok" class="btn btn-red btn-xl">Круто!</button>
+        </div>
+      </div>
+
+      <!-- Обучение -->
+      <div id="tutorial" class="modal hidden">
+        <div class="panel pop-card">
+          <div class="big-emoji">👋</div>
+          <h2>Привет, Питер!</h2>
+          <p class="lead">Нажимай на предметы в комнате.</p>
+          <p class="card-sub">Ноутбук — фото. Окно — спасать город. Остальное — улучшения.</p>
+          <button type="button" id="tut-ok" class="btn btn-red btn-xl">Понятно!</button>
+        </div>
+      </div>
+
+      <!-- Заглушка рекламы -->
+      <div id="ad-overlay" class="modal hidden">
+        <div class="panel pop-card ad-card">
+          <div class="big-emoji">📺</div>
+          <p id="ad-text" class="lead">Реклама…</p>
+          <button type="button" id="ad-skip" class="btn btn-blue btn-xl" disabled>Подождите</button>
+        </div>
+      </div>
+
+      <div id="toast" class="toast"></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
