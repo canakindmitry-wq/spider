@@ -199,7 +199,6 @@
   padding: 0;
   min-width: 56px;
   min-height: 56px;
-  z-index: 2;
   transform-style: preserve-3d;
   overflow: visible;
   touch-action: manipulation;
@@ -261,7 +260,7 @@
   height: 100%;
   background: linear-gradient(90deg, #8b5530, #5c3a1e);
   transform-origin: right center;
-  transform: rotateY(-90deg);
+  transform: rotateY(90deg);
   border-radius: 0 8px 8px 0;
 }
 
@@ -370,9 +369,9 @@
 }
 
 .face-back .wall-photos {
-  left: 58%;
+  left: 56%;
   top: 8%;
-  width: 120px;
+  width: 100px;
   transform: translateZ(10px);
 }
 
@@ -411,7 +410,7 @@
   height: calc(100% + 8px);
   background: linear-gradient(90deg, #8b5530, #5c3a1e);
   transform-origin: right center;
-  transform: rotateY(-90deg);
+  transform: rotateY(90deg);
   border-radius: 0 6px 6px 0;
 }
 
@@ -422,9 +421,9 @@
 }
 
 .face-back .trophy {
-  left: 86%;
-  top: 12%;
-  width: 56px;
+  left: 84%;
+  top: 8%;
+  width: 48px;
   transform: translateZ(16px);
 }
 
@@ -718,10 +717,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .prop > .label {
-  transform: translateZ(48px);
+  transform: translateZ(72px);
   pointer-events: none;
 }
 
@@ -734,6 +734,7 @@
   position: relative;
   transform-style: preserve-3d;
   pointer-events: none;
+  flex: 0 0 auto;
 }
 
 .solid .ft,
@@ -742,6 +743,7 @@
   position: absolute;
   display: block;
   box-sizing: border-box;
+  pointer-events: auto;
 }
 
 .solid .ft {
@@ -749,6 +751,7 @@
   height: var(--h);
   left: 0;
   top: 0;
+  transform: translateZ(var(--d));
 }
 
 .solid .sd {
@@ -757,7 +760,7 @@
   width: var(--d);
   height: var(--h);
   transform-origin: left center;
-  transform: rotateY(90deg);
+  transform: rotateY(-90deg);
 }
 
 .solid .tp {
@@ -773,9 +776,8 @@
 .prop-wardrobe {
   left: 6px;
   width: 86px;
-  height: 172px;
+  height: 188px;
   transform: translateZ(8px);
-  z-index: 2;
 }
 
 .ward {
@@ -864,7 +866,6 @@
   height: 78px;
   transform: translateZ(28px) rotateY(18deg) rotateZ(-16deg);
   pointer-events: none;
-  z-index: 2;
 }
 
 .g-body {
@@ -916,9 +917,8 @@
 .prop-bed {
   left: 112px;
   width: 216px;
-  height: 72px;
+  height: 78px;
   transform: translateZ(10px);
-  z-index: 2;
 }
 
 .bed-art {
@@ -1025,9 +1025,8 @@
 .prop-photo {
   left: 4px;
   width: 134px;
-  height: 108px;
+  height: 118px;
   transform: translateZ(176px);
-  z-index: 5;
 }
 
 .desk-mesh {
@@ -1041,7 +1040,7 @@
 .desk-box {
   --w: 112px;
   --h: 44px;
-  --d: 54px;
+  --d: 58px;
   position: absolute;
   left: 0;
   bottom: 0;
@@ -1076,8 +1075,8 @@
   left: 28px;
   bottom: 44px;
   width: 58px;
-  height: 36px;
-  transform: translateZ(18px);
+  height: 8px;
+  transform: translateZ(16px);
   transform-style: preserve-3d;
   z-index: 3;
 }
@@ -1085,14 +1084,14 @@
 .lp-screen {
   position: absolute;
   left: 0;
-  bottom: 8px;
+  bottom: 0;
   width: 58px;
   height: 34px;
   padding: 4px;
   background: linear-gradient(#3b4254, #111827);
   border-radius: 8px 8px 3px 3px;
   transform-origin: bottom center;
-  transform: rotateX(-28deg);
+  transform: rotateX(-32deg);
   transform-style: preserve-3d;
   box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
 }
@@ -1123,13 +1122,13 @@
   left: 0;
   bottom: 0;
   width: 58px;
-  height: 20px;
+  height: 22px;
   background:
     repeating-linear-gradient(90deg, #1e293b 0 6px, #38bdf8 6px 7px),
     #111827;
   border-radius: 0 0 6px 6px;
-  transform-origin: top center;
-  transform: rotateX(72deg);
+  transform-origin: bottom center;
+  transform: rotateX(78deg);
 }
 
 .laptop-3d.mini {
@@ -1279,7 +1278,6 @@
   width: 64px;
   height: 56px;
   transform: translateZ(198px);
-  z-index: 6;
 }
 
 .cam-3d {
@@ -1335,7 +1333,6 @@
   width: 66px;
   height: 52px;
   transform: translateZ(214px);
-  z-index: 6;
 }
 
 .chart-art {
@@ -1350,13 +1347,12 @@
   width: 62px;
   height: 50px;
   transform: translateZ(152px);
-  z-index: 4;
 }
 
 .crate-box {
   --w: 52px;
-  --h: 36px;
-  --d: 38px;
+  --h: 38px;
+  --d: 44px;
 }
 
 .crate-box .ft {
@@ -1385,7 +1381,6 @@
   width: 86px;
   height: 80px;
   transform: translateZ(118px) rotateY(16deg);
-  z-index: 3;
 }
 
 .tv.locked {
@@ -1401,8 +1396,8 @@
 
 .tv-box {
   --w: 68px;
-  --h: 42px;
-  --d: 26px;
+  --h: 44px;
+  --d: 34px;
   position: absolute;
   left: 4px;
   bottom: 14px;
@@ -1511,13 +1506,12 @@
   width: 46px;
   height: 82px;
   transform: translateZ(92px);
-  z-index: 3;
 }
 
 .fridge-box {
   --w: 36px;
   --h: 70px;
-  --d: 30px;
+  --d: 36px;
 }
 
 .fridge-box .ft {
@@ -1550,7 +1544,6 @@
   width: 44px;
   height: 54px;
   transform: translateZ(108px);
-  z-index: 3;
 }
 
 .plant-3d {
