@@ -144,15 +144,43 @@ export function applyRemoteSave(remote) {
 }
 
 export function costume() {
-  return COSTUME_LEVELS[state.costumeLevel]
+  const level = state.costumeLevel
+  const base = COSTUME_LEVELS[Math.min(level, 10)]
+  if (level <= 10) return base
+  const extra = level - 10
+  return {
+    ...base,
+    level,
+    name: 'Абсолютный паук',
+    heroBonus: +(base.heroBonus + extra * 0.25).toFixed(2),
+  }
 }
 
 export function camera() {
-  return CAMERA_LEVELS[state.cameraLevel]
+  const level = state.cameraLevel
+  const base = CAMERA_LEVELS[Math.min(level, 10)]
+  if (level <= 10) return base
+  const extra = level - 10
+  return {
+    ...base,
+    level,
+    name: 'Абсолютная камера',
+    photoBonus: +(base.photoBonus + extra * 0.2).toFixed(2),
+  }
 }
 
 export function passive() {
-  return PASSIVE_LEVELS[state.passiveLevel]
+  const level = state.passiveLevel
+  const base = PASSIVE_LEVELS[Math.min(level, 10)]
+  if (level <= 10) return base
+  const extra = level - 10
+  return {
+    ...base,
+    level,
+    name: 'Финансовая империя',
+    perMin: base.perMin + extra * 10,
+    maxHours: Math.min(12, +(base.maxHours + extra * 0.25).toFixed(2)),
+  }
 }
 
 export function equippedSkinData() {
@@ -260,6 +288,7 @@ export function touchLastVisit() {
 
 export const TV_COOLDOWN_MS = 7 * 60 * 1000
 export const TV_REWARD = 200
+export const INTERSTITIAL_MS = 5 * 60 * 1000
 
 export function todayKey() {
   const d = new Date()
@@ -292,18 +321,61 @@ export function maxPassiveBank(levelObj = passive(), perMin = null) {
 }
 
 export function nextCostumeCost() {
-  const next = COSTUME_LEVELS[state.costumeLevel + 1]
-  return next ? next.cost : null
+  const lv = state.costumeLevel
+  if (lv < 10) return COSTUME_LEVELS[lv + 1].cost
+  return Math.round(COSTUME_LEVELS[10].cost * 1.55 ** (lv - 9))
 }
 
 export function nextCameraCost() {
-  const next = CAMERA_LEVELS[state.cameraLevel + 1]
-  return next ? next.cost : null
+  const lv = state.cameraLevel
+  if (lv < 10) return CAMERA_LEVELS[lv + 1].cost
+  return Math.round(CAMERA_LEVELS[10].cost * 1.5 ** (lv - 9))
 }
 
 export function nextPassiveCost() {
-  const next = PASSIVE_LEVELS[state.passiveLevel + 1]
-  return next ? next.cost : null
+  const lv = state.passiveLevel
+  if (lv < 10) return PASSIVE_LEVELS[lv + 1].cost
+  return Math.round(PASSIVE_LEVELS[10].cost * 1.45 ** (lv - 9))
+}
+
+export function nextCostumePreview() {
+  const lv = state.costumeLevel + 1
+  if (lv <= 10) return COSTUME_LEVELS[lv]
+  const cur = costume()
+  return {
+    ...cur,
+    level: lv,
+    name: 'Абсолютный паук',
+    cost: nextCostumeCost(),
+    heroBonus: +(cur.heroBonus + 0.25).toFixed(2),
+  }
+}
+
+export function nextCameraPreview() {
+  const lv = state.cameraLevel + 1
+  if (lv <= 10) return CAMERA_LEVELS[lv]
+  const cur = camera()
+  return {
+    ...cur,
+    level: lv,
+    name: 'Абсолютная камера',
+    cost: nextCameraCost(),
+    photoBonus: +(cur.photoBonus + 0.2).toFixed(2),
+  }
+}
+
+export function nextPassivePreview() {
+  const lv = state.passiveLevel + 1
+  if (lv <= 10) return PASSIVE_LEVELS[lv]
+  const cur = passive()
+  return {
+    ...cur,
+    level: lv,
+    name: 'Финансовая империя',
+    cost: nextPassiveCost(),
+    perMin: cur.perMin + 10,
+    maxHours: Math.min(12, +(cur.maxHours + 0.25).toFixed(2)),
+  }
 }
 
 export function checkAchievements() {

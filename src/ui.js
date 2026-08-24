@@ -40,9 +40,13 @@ import {
   formatCountdown,
   maxPassiveBank,
   TV_REWARD,
+  INTERSTITIAL_MS,
+  nextCostumePreview,
+  nextCameraPreview,
+  nextPassivePreview,
 } from './state.js'
-import { sfx, isMuted, setMuted, unlockAudio } from './audio.js'
-import { startPhotoGame, startHeroGame, shootPhoto, abortPhoto, abortHero } from './games.js'
+import { sfx, isMuted, setMuted, unlockAudio, playBgm } from './audio.js'
+import { startPhotoGame, startHeroGame, shootPhoto, abortPhoto, abortHero, isMinigameOpen } from './games.js'
 import { showRewarded, showInterstitial, purchaseProduct, gameplayStart } from './yandex.js'
 import { spiderSVG } from './chibi.js'
 
@@ -52,7 +56,7 @@ const $ = (id) => document.getElementById(id)
 
 let lastShift = null
 let doubledThisShift = false
-let interstitialCount = 0
+let interstitialBusy = false
 const achievementQueue = []
 let showingAchievement = false
 let uiBound = false
@@ -156,6 +160,7 @@ function openModal(title, html, { wide = false } = {}) {
 
 function closeModal() {
   $('modal').classList.add('hidden')
+  maybeAutoInterstitial()
 }
 
 function buyBtn(cost) {
@@ -180,12 +185,10 @@ function updateTvBadge() {
 
 export function openCostume() {
   const c = costume()
-  const next = COSTUME_LEVELS[state.costumeLevel + 1]
+  const next = nextCostumePreview()
   const pal = palette()
   const rain = Boolean(equippedSkinData()?.rainbow)
-  const upgrade = next
-    ? `<div class="card-row"><div><div class="card-title">Улучшить до ${next.name}</div><div class="card-sub">Геройство +${Math.round(next.heroBonus * 100)}% · смена ${next.duration}с</div></div>${buyBtn(next.cost).replace('data-cost', 'data-act="up-costume" data-cost')}</div>`
-    : `<div class="card-row"><div class="card-title">Костюм полностью улучшен!</div></div>`
+  const upgrade = `<div class="card-row"><div><div class="card-title">Улучшить до ур. ${next.level}${next.level > 10 ? '' : ` · ${next.name}`}</div><div class="card-sub">Геройство +${Math.round(next.heroBonus * 100)}% · смена ${next.duration}с${next.level > 10 ? ' · вид как на 10 уровне' : ''}</div></div>${buyBtn(nextCostumeCost()).replace('data-cost', 'data-act="up-costume" data-cost')}</div>`
 
   const skinCards = COIN_SKINS.map((s) => {
     const owned = state.ownedSkins.includes(s.id)
@@ -204,7 +207,7 @@ export function openCostume() {
   openModal(
     'Костюм',
     `<div class="suit-preview">${spiderSVG(pal, { rainbow: rain, torn: state.costumeLevel === 1 && !state.equippedSkin })}</div>
-     <p class="lead">Сейчас: <b>${c.name}</b> (ур. ${c.level}/10)</p>
+     <p class="lead">Сейчас: <b>${c.name}</b> (ур. ${c.level}${c.level <= 10 ? '/10' : ''})</p>
      <p class="card-sub">Бонус геройства +${Math.round(c.heroBonus * 100)}% · слотов целей: ${c.slots}</p>
      ${upgrade}
      <h3 class="section-h">Скины за монеты</h3>
@@ -216,15 +219,13 @@ export function openCostume() {
 
 export function openCamera() {
   const cam = camera()
-  const next = CAMERA_LEVELS[state.cameraLevel + 1]
-  const upgrade = next
-    ? `<div class="card-row"><div><div class="card-title">Улучшить до ${next.name}</div><div class="card-sub">Кадров: ${next.shots} · фото +${Math.round(next.photoBonus * 100)}%</div></div>${buyBtn(next.cost).replace('data-cost', 'data-act="up-camera" data-cost')}</div>`
-    : `<div class="card-row"><div class="card-title">Камера полностью улучшена!</div></div>`
+  const next = nextCameraPreview()
+  const upgrade = `<div class="card-row"><div><div class="card-title">Улучшить до ур. ${next.level}${next.level > 10 ? '' : ` · ${next.name}`}</div><div class="card-sub">Кадров: ${next.shots} · фото +${Math.round(next.photoBonus * 100)}%${next.level > 10 ? ' · вид как на 10 уровне' : ''}</div></div>${buyBtn(nextCameraCost()).replace('data-cost', 'data-act="up-camera" data-cost')}</div>`
 
   openModal(
     'Камера',
     `<div class="big-emoji">📷</div>
-     <p class="lead">Сейчас: <b>${cam.name}</b> (ур. ${cam.level}/10)</p>
+     <p class="lead">Сейчас: <b>${cam.name}</b> (ур. ${cam.level}${cam.level <= 10 ? '/10' : ''})</p>
      <ul class="feat"><li>Кадров за смену: <b>${cam.shots}</b></li><li>Доход с фото: <b>+${Math.round(cam.photoBonus * 100)}%</b></li><li>Шанс редкого кадра: <b>${Math.round((0.2 + cam.rareBonus) * 100)}%</b></li></ul>
      ${upgrade}`,
   )
@@ -232,15 +233,13 @@ export function openCamera() {
 
 export function openPassive() {
   const p = passive()
-  const next = PASSIVE_LEVELS[state.passiveLevel + 1]
-  const upgrade = next
-    ? `<div class="card-row"><div><div class="card-title">Улучшить до ${next.name}</div><div class="card-sub">${next.perMin} монет/мин · максимум ${maxPassiveBank(next)} 🪙</div></div>${buyBtn(next.cost).replace('data-cost', 'data-act="up-passive" data-cost')}</div>`
-    : `<div class="card-row"><div class="card-title">Финансовая империя построена!</div></div>`
+  const next = nextPassivePreview()
+  const upgrade = `<div class="card-row"><div><div class="card-title">Улучшить до ур. ${next.level}${next.level > 10 ? '' : ` · ${next.name}`}</div><div class="card-sub">${next.perMin} монет/мин · максимум ${maxPassiveBank(next)} 🪙${next.level > 10 ? ' · без смены оформления' : ''}</div></div>${buyBtn(nextPassiveCost()).replace('data-cost', 'data-act="up-passive" data-cost')}</div>`
 
   openModal(
     'Пассивный доход',
     `<div class="big-emoji">📈</div>
-     <p class="lead">Сейчас: <b>${p.name}</b> (ур. ${p.level}/10)</p>
+     <p class="lead">Сейчас: <b>${p.name}</b> (ур. ${p.level}${p.level <= 10 ? '/10' : ''})</p>
      <p class="income-big">+${passivePerMin()} 🪙 / мин</p>
      <p class="card-sub">Даже когда ты не в игре, Человек-паук ведёт блог. Максимум можно накопить: ${maxPassiveBank(p, passivePerMin())} 🪙</p>
      ${upgrade}`,
@@ -411,17 +410,32 @@ async function doDouble() {
 async function closeResult() {
   $('screen-result').classList.add('hidden')
   lastShift = null
-  interstitialCount += 1
-  if (!state.adsDisabled && interstitialCount % 3 === 0) {
-    const now = Date.now()
-    if (now - state.lastInterstitialAt > 90000) {
-      state.lastInterstitialAt = now
-      saveState()
-      await showInterstitial()
-    }
-  }
   renderRoom()
   renderHud()
+  await maybeAutoInterstitial()
+}
+
+function overlayOpen() {
+  const ids = ['modal', 'screen-result', 'screen-offline', 'ad-overlay', 'tutorial', 'achievement-pop']
+  return ids.some((id) => {
+    const el = $(id)
+    return el && !el.classList.contains('hidden')
+  })
+}
+
+async function maybeAutoInterstitial() {
+  if (!gameStarted || interstitialBusy || state.adsDisabled) return
+  if (isMinigameOpen() || overlayOpen()) return
+  const now = Date.now()
+  if (now - (Number(state.lastInterstitialAt) || 0) < INTERSTITIAL_MS) return
+  interstitialBusy = true
+  state.lastInterstitialAt = now
+  saveState()
+  try {
+    await showInterstitial()
+  } finally {
+    interstitialBusy = false
+  }
 }
 
 function showOffline(amount, minutes) {
@@ -563,6 +577,7 @@ function startPassiveTicker() {
   setInterval(() => {
     if (!gameStarted) return
     updateTvBadge()
+    maybeAutoInterstitial()
     if (!$('screen-offline').classList.contains('hidden')) return
     const { coins, minutes } = collectPassiveCoins()
     if (coins > 0 && minutes > 0) {
@@ -642,7 +657,7 @@ async function onModalClick(e) {
     afterCoins(checkAchievements())
     renderRoom()
     openCostume()
-    toast(`Костюм: ${costume().name}`)
+    toast(`Костюм: ${costume().name} · ур. ${costume().level}`)
   } else if (act === 'up-camera') {
     const cost = nextCameraCost()
     if (cost == null || !spendCoins(cost)) return failBuy()
@@ -652,7 +667,7 @@ async function onModalClick(e) {
     afterCoins(checkAchievements())
     renderRoom()
     openCamera()
-    toast(`Камера: ${camera().name}`)
+    toast(`Камера: ${camera().name} · ур. ${camera().level}`)
   } else if (act === 'up-passive') {
     const cost = nextPassiveCost()
     if (cost == null || !spendCoins(cost)) return failBuy()
@@ -662,7 +677,7 @@ async function onModalClick(e) {
     afterCoins(checkAchievements())
     renderRoom()
     openPassive()
-    toast(`Доход: ${passive().name}`)
+    toast(`Доход: ${passive().name} · ур. ${passive().level}`)
   } else if (act === 'buy-item') {
     const item = ROOM_ITEMS.find((x) => x.id === id)
     if (!item || hasItem(item.id) || !spendCoins(item.cost)) return failBuy()
@@ -736,8 +751,15 @@ export function startFromSplash() {
   renderRoom()
   renderHud()
   gameStarted = true
+  unlockAudio()
+  playBgm('room')
   gameplayStart()
   startPassiveTicker()
+
+  if (!state.lastInterstitialAt) {
+    state.lastInterstitialAt = Date.now()
+    saveState()
+  }
 
   const { coins, minutes } = collectPassiveCoins()
   if (coins > 0) showOffline(coins, minutes)

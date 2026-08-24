@@ -10,6 +10,7 @@
 
 import { PREMIUM, PAID_SKINS } from './data.js'
 import { state, saveState, applyRemoteSave, setPersistHook } from './state.js'
+import { pauseBgm, resumeBgm } from './audio.js'
 
 export const LEADERBOARD_ID = 'coins'
 
@@ -256,57 +257,70 @@ export function gameplayStop() {
   }
 }
 
-/** Interstitial между сменами. Не блокирует игру, если не показалась. */
-export async function showInterstitial() {
-  if (!ysdk) return
+async function withPausedAudio(fn) {
   gameplayStop()
+  pauseBgm()
   try {
-    await new Promise((resolve) => {
-      ysdk.adv.showFullscreenAdv({
-        callbacks: {
-          onClose: () => resolve(),
-          onError: () => resolve(),
-        },
-      })
-    })
-  } catch {
-    /* ignore */
+    return await fn()
+  } finally {
+    resumeBgm()
+    gameplayStart()
   }
-  gameplayStart()
+}
+
+/** Interstitial. Локально — короткая заглушка, в каталоге Яндекса — SDK. */
+export async function showInterstitial() {
+  return withPausedAudio(async () => {
+    if (ysdk) {
+      try {
+        await new Promise((resolve) => {
+          ysdk.adv.showFullscreenAdv({
+            callbacks: {
+              onClose: () => resolve(),
+              onError: () => resolve(),
+            },
+          })
+        })
+      } catch {
+        /* ignore */
+      }
+      return
+    }
+    await showFakeAd('Реклама')
+  })
 }
 
 /**
  * Rewarded. Возвращает true, если награда должна быть выдана.
  */
 export async function showRewarded(placement = 'double') {
-  if (ysdk) {
-    gameplayStop()
-    const ok = await new Promise((resolve) => {
-      let rewarded = false
-      try {
-        ysdk.adv.showRewardedVideo({
-          callbacks: {
-            onOpen: () => {},
-            onRewarded: () => {
-              rewarded = true
+  return withPausedAudio(async () => {
+    if (ysdk) {
+      return await new Promise((resolve) => {
+        let rewarded = false
+        try {
+          ysdk.adv.showRewardedVideo({
+            callbacks: {
+              onOpen: () => {},
+              onRewarded: () => {
+                rewarded = true
+              },
+              onClose: () => resolve(rewarded),
+              onError: () => resolve(false),
             },
-            onClose: () => resolve(rewarded),
-            onError: () => resolve(false),
-          },
-        })
-      } catch {
-        resolve(false)
-      }
-    })
-    gameplayStart()
-    return ok
-  }
-  const titles = {
-    double: 'Реклама: удвоение',
-    tv: 'Реклама: телевизор',
-    offline: 'Реклама: +50% офлайн',
-  }
-  return showFakeAd(titles[placement] || 'Реклама')
+          })
+        } catch {
+          resolve(false)
+        }
+      })
+    }
+    const titles = {
+      double: 'Реклама: удвоение',
+      tv: 'Реклама: телевизор',
+      offline: 'Реклама: +50% офлайн',
+    }
+    return showFakeAd(titles[placement] || 'Реклама')
+  })
 }
 
 export async function purchaseProduct(productId) {

@@ -5,7 +5,7 @@
 
 import { PHOTO_SUBJECTS, PHOTOS } from './data.js'
 import { state, camera, costume, bonuses, photoIncome, heroIncome } from './state.js'
-import { sfx } from './audio.js'
+import { sfx, playBgm } from './audio.js'
 import { gameplayStart, gameplayStop } from './yandex.js'
 import { spiderSVG } from './chibi.js'
 
@@ -16,6 +16,10 @@ let photoSession = null
 let heroSession = null
 
 const $ = (id) => document.getElementById(id)
+
+export function isMinigameOpen() {
+  return running
+}
 
 function rand(a, b) {
   return a + Math.random() * (b - a)
@@ -56,6 +60,7 @@ export function startPhotoGame({ onDone }) {
 
   $('screen-photo').classList.remove('hidden')
   running = true
+  playBgm('photo')
   gameplayStart()
   loopPhoto()
 }
@@ -114,7 +119,7 @@ export function shootPhoto() {
   } else if (dist <= mediumR) {
     quality = 'medium'
     base = 6
-    sfx.tap()
+    sfx.perfect()
   } else {
     quality = 'miss'
     base = 2
@@ -170,6 +175,7 @@ function finishPhoto() {
   running = false
   cancelAnimationFrame(photoRaf)
   gameplayStop()
+  playBgm('room')
   $('screen-photo').classList.add('hidden')
 
   const cam = camera()
@@ -202,6 +208,7 @@ export function abortPhoto() {
   running = false
   cancelAnimationFrame(photoRaf)
   gameplayStop()
+  playBgm('room')
   $('screen-photo').classList.add('hidden')
   photoSession = null
 }
@@ -237,6 +244,7 @@ export function startHeroGame({ onDone }) {
   $('hero-score').textContent = '0'
   $('screen-hero').classList.remove('hidden')
   running = true
+  playBgm('hero')
   gameplayStart()
   const tryStart = () => {
     if (!running || !heroSession) return
@@ -401,6 +409,7 @@ function finishHero() {
   cancelAnimationFrame(heroTimer)
   clearHeroTargets()
   gameplayStop()
+  playBgm('room')
   $('screen-hero').classList.add('hidden')
   const cb = heroSession.onDone
   const session = {
@@ -419,6 +428,7 @@ export function abortHero() {
   cancelAnimationFrame(heroTimer)
   clearHeroTargets()
   gameplayStop()
+  playBgm('room')
   $('screen-hero').classList.add('hidden')
   heroSession = null
 }

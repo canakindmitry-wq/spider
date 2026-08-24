@@ -1,19 +1,86 @@
 /**
- * Короткие звуки через Web Audio API — без внешних файлов.
- * Игра запускается сразу, звук включается после первого касания.
+ * Музыка и эффекты из MP3.
+ * Фоновые треки кроссфейдятся; эффекты слегка приглушают музыку, не глушат её.
+ *
+ * Громкости подогнаны по loudness исходников:
+ * coin ≈ −16 дБ, фото-BGM ≈ −16 дБ, комната ≈ −26 дБ, промах ≈ −32 дБ.
  */
 
-let ctx = null
+const SRC = {
+  ui: './audio/ui.mp3',
+  buy: './audio/buy.mp3',
+  coin: './audio/coin.mp3',
+  miss: './audio/miss.mp3',
+  photo: './audio/photo.mp3',
+  heroHit: './audio/hero-hit.mp3',
+  room: './audio/bgm-room.mp3',
+  photoBgm: './audio/bgm-photo.mp3',
+  heroBgm: './audio/bgm-hero.mp3',
+}
+
+const VOL = {
+  ui: 0.5,
+  buy: 0.4,
+  coin: 0.26,
+  miss: 0.9,
+  photo: 0.56,
+  heroHit: 0.82,
+  room: 0.3,
+  photoBgm: 0.13,
+  heroBgm: 0.14,
+}
+
+const SFX_DUCK_MS = {
+  ui: 520,
+  buy: 720,
+  coin: 420,
+  miss: 980,
+  photo: 240,
+  heroHit: 980,
+}
+
 let muted = false
 let unlocked = false
+let currentBgm = null
+let duckTimer = 0
+let fadeSeq = 0
+let pauseToken = 0
 
-function getCtx() {
-  if (!ctx) {
-    const AC = window.AudioContext || window.webkitAudioContext
-    if (!AC) return null
-    ctx = new AC()
-  }
-  return ctx
+const bgmA = new Audio()
+const bgmB = new Audio()
+let front = bgmA
+let back = bgmB
+
+for (const el of [bgmA, bgmB]) {
+  el.loop = true
+  el.preload = 'auto'
+  el.volume = 0
+}
+
+const sfxProto = {
+  ui: new Audio(SRC.ui),
+  buy: new Audio(SRC.buy),
+  coin: new Audio(SRC.coin),
+  miss: new Audio(SRC.miss),
+  photo: new Audio(SRC.photo),
+  heroHit: new Audio(SRC.heroHit),
+}
+for (const a of Object.values(sfxProto)) a.preload = 'auto'
+
+function bgmSrc(name) {
+  if (name === 'photo') return SRC.photoBgm
+  if (name === 'hero') return SRC.heroBgm
+  return SRC.room
+}
+
+function bgmVol(name) {
+  if (name === 'photo') return VOL.photoBgm
+  if (name === 'hero') return VOL.heroBgm
+  return VOL.room
+}
+
+function trackOf(el) {
+  return el.dataset.track || ''
 }
 
 export function isMuted() {
@@ -21,12 +88,14 @@ export function isMuted() {
 }
 
 export function setMuted(value) {
-  muted = value
+  muted = Boolean(value)
   try {
-    localStorage.setItem('spiderman_tycoon_mute', value ? '1' : '0')
+    localStorage.setItem('spiderman_tycoon_mute', muted ? '1' : '0')
   } catch {
     /* ignore */
   }
+  if (muted) pauseBgm()
+  else if (currentBgm) playBgm(currentBgm, { force: true })
 }
 
 export function loadMute() {
@@ -39,76 +108,143 @@ export function loadMute() {
 }
 
 export async function unlockAudio() {
-  const c = getCtx()
-  if (!c) return
-  if (c.state === 'suspended') {
-    try {
-      await c.resume()
-    } catch {
-      /* ignore */
-    }
-  }
   unlocked = true
+  try {
+    await front.play()
+    front.pause()
+  } catch {
+    /* iOS: без жеста нельзя */
+  }
+  if (!muted && currentBgm) playBgm(currentBgm, { force: true })
 }
 
-function beep(freq, dur, type = 'square', gain = 0.06, slide = 0) {
+function fade(el, to, ms) {
+  const token = ++fadeSeq
+  el._fadeToken = token
+  const from = el.volume
+  const t0 = performance.now()
+  const tick = (now) => {
+    if (el._fadeToken !== token) return
+    const k = Math.min(1, (now - t0) / Math.max(1, ms))
+    const ease = k * k * (3 - 2 * k)
+    el.volume = Math.max(0, Math.min(1, from + (to - from) * ease))
+    if (k < 1) requestAnimationFrame(tick)
+  }
+  requestAnimationFrame(tick)
+}
+
+export function playBgm(name, { force = false } = {}) {
+  if (!name) return
+  currentBgm = name
+  pauseToken += 1
   if (muted || !unlocked) return
-  const c = getCtx()
-  if (!c) return
-  const osc = c.createOscillator()
-  const g = c.createGain()
-  osc.type = type
-  osc.frequency.setValueAtTime(freq, c.currentTime)
-  if (slide) osc.frequency.linearRampToValueAtTime(freq + slide, c.currentTime + dur)
-  g.gain.setValueAtTime(gain, c.currentTime)
-  g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur)
-  osc.connect(g)
-  g.connect(c.destination)
-  osc.start()
-  osc.stop(c.currentTime + dur + 0.02)
+
+  const url = bgmSrc(name)
+  const target = bgmVol(name)
+
+  if (trackOf(front) === name) {
+    if (!front.paused && !force) {
+      fade(front, target, 280)
+      return
+    }
+    const start = front.play()
+    if (start && typeof start.catch === 'function') start.catch(() => {})
+    fade(front, target, 640)
+    return
+  }
+
+  const incoming = back
+  const outgoing = front
+
+  incoming.dataset.track = name
+  incoming.src = url
+  incoming.loop = true
+  incoming.volume = 0
+  const start = incoming.play()
+  if (start && typeof start.catch === 'function') start.catch(() => {})
+
+  fade(incoming, target, 820)
+  if (!outgoing.paused || outgoing.volume > 0.02) fade(outgoing, 0, 560)
+  setTimeout(() => {
+    if (outgoing !== front) {
+      outgoing.pause()
+      outgoing.dataset.track = ''
+    }
+  }, 600)
+
+  front = incoming
+  back = outgoing
 }
 
-export const sfx = {
+export function pauseBgm() {
+  const token = ++pauseToken
+  fade(front, 0, 320)
+  fade(back, 0, 320)
+  setTimeout(() => {
+    if (token !== pauseToken) return
+    front.pause()
+    back.pause()
+  }, 340)
+}
+
+export function resumeBgm() {
+  if (muted || !currentBgm) return
+  playBgm(currentBgm, { force: true })
+}
+
+function duck(key) {
+  if (muted || front.paused) return
+  const base = bgmVol(currentBgm || 'room')
+  fade(front, base * 0.5, 90)
+  clearTimeout(duckTimer)
+  duckTimer = setTimeout(() => {
+    if (!muted && !front.paused) fade(front, base, 280)
+  }, SFX_DUCK_MS[key] ?? 360)
+}
+
+function playSfx(key) {
+  if (muted || !unlocked) return
+  const proto = sfxProto[key]
+  if (!proto) return
+  duck(key)
+  const node = proto.cloneNode()
+  node.volume = VOL[key] ?? 0.5
+  const p = node.play()
+  if (p && typeof p.catch === 'function') p.catch(() => {})
+}
+
+const sfxApi = {
   tap() {
-    beep(520, 0.06, 'square', 0.05)
+    playSfx('ui')
   },
   coin() {
-    beep(880, 0.09, 'square', 0.06, 220)
+    playSfx('coin')
   },
   win() {
-    beep(523, 0.08, 'triangle', 0.07)
-    setTimeout(() => beep(659, 0.08, 'triangle', 0.07), 90)
-    setTimeout(() => beep(784, 0.16, 'triangle', 0.08), 180)
+    playSfx('coin')
   },
-  shoot() {
-    beep(180, 0.08, 'sawtooth', 0.05)
-    beep(720, 0.05, 'square', 0.04)
-  },
+  shoot() {},
   perfect() {
-    beep(880, 0.07, 'triangle', 0.07, 200)
-    setTimeout(() => beep(1174, 0.12, 'triangle', 0.07), 70)
+    playSfx('photo')
   },
   miss() {
-    beep(180, 0.14, 'sawtooth', 0.05, -60)
+    playSfx('miss')
   },
   heroHit() {
-    beep(640, 0.07, 'square', 0.05)
+    playSfx('heroHit')
   },
   superHit() {
-    beep(392, 0.08, 'triangle', 0.07)
-    setTimeout(() => beep(784, 0.14, 'triangle', 0.07), 80)
+    playSfx('heroHit')
   },
   error() {
-    beep(140, 0.18, 'square', 0.05)
+    playSfx('miss')
   },
   rare() {
-    beep(523, 0.1, 'triangle', 0.07)
-    setTimeout(() => beep(659, 0.1, 'triangle', 0.07), 100)
-    setTimeout(() => beep(784, 0.1, 'triangle', 0.07), 200)
-    setTimeout(() => beep(1046, 0.18, 'triangle', 0.08), 300)
+    playSfx('photo')
   },
   upgrade() {
-    beep(440, 0.08, 'square', 0.06)
-    setTimeout(() => beep(660, 0.12, 'square', 0.06), 80)
+    playSfx('buy')
   },
 }
+
+export { sfxApi as sfx }
