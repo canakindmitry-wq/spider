@@ -5,7 +5,7 @@
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="theme-color" content="#f3ead8" />
+    <meta name="theme-color" content="#6aa8b4" />
     <title>Симулятор Человека-паука</title>
   </head>
   <body>
@@ -41,17 +41,14 @@
         </header>
 
         <div id="room" class="room">
-          <div class="sunbeam" aria-hidden="true"></div>
           <div class="iso-stage">
             <div class="room-3d">
               <div class="face-floor">
-                <div class="planks"></div>
-                <div class="floor-light"></div>
-                <div class="deco carpet" data-deco="carpet"></div>
-                <span class="fshade s-ward"></span>
-                <span class="fshade s-bed"></span>
-                <span class="fshade s-desk"></span>
+                <div class="spider-rug" data-deco="carpet"></div>
                 <span class="fshade s-tv"></span>
+                <span class="fshade s-ward"></span>
+                <span class="fshade s-desk"></span>
+                <span class="fshade s-box"></span>
               </div>
 
               <div class="face-left">
@@ -59,27 +56,7 @@
                 <span class="wall-lip" aria-hidden="true"></span>
                 <div class="wall-tone" aria-hidden="true"></div>
                 <div class="baseboard" aria-hidden="true"></div>
-                <div class="coat-rack" aria-hidden="true">
-                  <span class="rail"></span>
-                  <span class="peg"></span><span class="peg"></span><span class="peg"></span>
-                  <span class="robe"></span>
-                </div>
-                <div class="poster-row deco poster" data-deco="poster">
-                  <div class="art-poster p-cat"><span>KEEP<br />CALM</span></div>
-                  <div class="art-poster p-city"></div>
-                  <div class="art-poster p-out"><span>CITY</span></div>
-                </div>
-                <div class="deco shelf" data-deco="shelf">
-                  <div class="shelf-art">
-                    <span class="board"></span>
-                    <i></i><i></i><i></i>
-                    <b class="cube"></b>
-                    <em class="frame-mini"></em>
-                  </div>
-                </div>
-                <div class="deco lamp" data-deco="lamp">
-                  <div class="lamp-art"><span class="glow"></span></div>
-                </div>
+                <div class="corner-web" aria-hidden="true"></div>
               </div>
 
               <div class="face-back">
@@ -88,28 +65,28 @@
                 <div class="wall-tone" aria-hidden="true"></div>
                 <div class="baseboard" aria-hidden="true"></div>
                 <div class="corner-join" aria-hidden="true"></div>
+                <div class="corner-web back" aria-hidden="true"></div>
 
-                <button type="button" class="hotspot window" data-hot="hero" aria-label="Работа супергероем">
+                <button type="button" class="hotspot window" data-hot="hero" aria-label="Спасать город">
                   <div class="win-3d">
                     <span class="win-sd"></span>
                     <span class="win-tp"></span>
                     <div class="window-glass">
                       <div class="day-sky"></div>
-                      <div class="cloud c1"></div>
-                      <div class="cloud c2"></div>
-                      <div class="mini-city"></div>
-                      <div class="spidey-swing" id="window-spidey"></div>
+                      <div class="spidey-climb" id="window-spidey"></div>
                     </div>
+                    <span class="sill"></span>
                   </div>
-                  <span class="label">Герой</span>
+                  <span class="stamp">Спасать</span>
                 </button>
 
                 <button type="button" class="hotspot wall-photos" data-hot="photos" aria-label="Стена с фото">
+                  <div class="mask-poster" aria-hidden="true"></div>
                   <div id="wall-frames" class="wall-frames"></div>
-                  <span class="label">Стена</span>
                 </button>
 
                 <button type="button" class="hotspot trophy" data-hot="achievements" aria-label="Достижения">
+                  <div class="shelf-wood" aria-hidden="true"></div>
                   <div class="trophy-3d">
                     <div class="solid trophy-base">
                       <span class="ft"></span>
@@ -118,7 +95,7 @@
                     </div>
                     <div class="trophy-art"><i></i><b></b></div>
                   </div>
-                  <span class="label">Достижения</span>
+                  <span class="stamp">Достижения</span>
                 </button>
               </div>
 
@@ -128,7 +105,7 @@
                   <span class="sd"></span>
                   <span class="tp"></span>
                   <span class="door-swing l">
-                    <span class="door-face"><em class="mirror"></em></span>
+                    <span class="door-face"><span class="stamp vert">Костюм</span></span>
                     <span class="door-edge"></span>
                   </span>
                   <span class="door-swing r">
@@ -139,70 +116,38 @@
                 <span class="hanger-bar" aria-hidden="true"></span>
                 <div id="hanger-suit" class="hanger-suit"></div>
                 <span id="costume-level-pip" class="pip">ур. 1</span>
-                <span class="label" id="hanger-name">Костюм</span>
+                <span id="hanger-name" class="sr-only">Костюм</span>
               </button>
 
-              <div class="prop guitar" aria-hidden="true">
-                <span class="g-body"><em></em></span>
-                <span class="g-neck"><em></em></span>
-              </div>
-
-              <button type="button" class="hotspot prop prop-bed" data-hot="shop" aria-label="Кровать">
-                <div class="bed-art" data-deco="bed">
-                  <div class="solid bed-box" aria-hidden="true">
-                    <span class="ft"></span>
-                    <span class="sd"></span>
-                    <span class="tp"></span>
-                  </div>
-                  <div class="solid mattress" aria-hidden="true">
-                    <span class="ft"></span>
-                    <span class="sd"></span>
-                    <span class="tp"></span>
-                  </div>
-                  <div class="solid duvet" aria-hidden="true">
-                    <span class="ft"></span>
-                    <span class="sd"></span>
-                    <span class="tp"></span>
-                  </div>
-                  <div class="solid pillow" aria-hidden="true">
-                    <span class="ft"></span>
-                    <span class="sd"></span>
-                    <span class="tp"></span>
-                  </div>
+              <button type="button" class="hotspot prop prop-box" data-hot="shop" aria-label="Магазин">
+                <div class="solid crate-box" aria-hidden="true">
+                  <span class="ft"><i class="tape"></i><b class="spider-mark"></b></span>
+                  <span class="sd"><span class="stamp">Магазин</span></span>
+                  <span class="tp"></span>
                 </div>
-                <span class="label">Комната</span>
               </button>
 
-              <button type="button" class="hotspot prop prop-photo" data-hot="photo" aria-label="Работа фотографом">
+              <button type="button" class="hotspot prop prop-photo" data-hot="photo" aria-label="Работать фотографом">
                 <div class="desk-mesh" aria-hidden="true">
                   <div class="solid desk-box">
-                    <span class="ft"><i></i><i></i></span>
+                    <span class="ft"></span>
                     <span class="sd"></span>
                     <span class="tp"></span>
                   </div>
                   <div class="laptop-3d">
                     <div class="lp-screen">
                       <div class="screen-glow"></div>
+                      <span class="stamp on-screen">Работать</span>
                       <span class="lp-side"></span>
                     </div>
                     <div class="lp-base"></div>
                   </div>
-                  <div class="mug-3d">
-                    <span class="mug-side"></span>
-                    <span class="mug-top"></span>
-                    <span class="mug-handle"></span>
-                  </div>
                 </div>
                 <div class="chair-3d" aria-hidden="true">
                   <span class="ch-back"></span>
-                  <span class="ch-bside"></span>
                   <span class="ch-seat"></span>
-                  <span class="ch-arm l"></span>
-                  <span class="ch-arm r"></span>
-                  <span class="ch-pole"></span>
-                  <span class="ch-star"></span>
+                  <span class="ch-leg"></span>
                 </div>
-                <span class="label">Фото</span>
               </button>
 
               <button type="button" class="hotspot prop prop-cam" data-hot="camera" aria-label="Камера">
@@ -215,10 +160,9 @@
                   <span class="cam-lens"></span>
                 </div>
                 <span id="cam-level-pip" class="pip">ур. 1</span>
-                <span class="label">Камера</span>
               </button>
 
-              <button type="button" class="hotspot prop prop-blog" data-hot="passive" aria-label="Пассивный доход">
+              <button type="button" class="hotspot prop prop-blog" data-hot="passive" aria-label="Блог">
                 <div id="chart-obj" class="chart-art">
                   <div class="laptop-3d mini">
                     <div class="lp-screen"><i></i><span class="lp-side"></span></div>
@@ -226,16 +170,6 @@
                   </div>
                 </div>
                 <span id="passive-level-pip" class="pip">ур. 1</span>
-                <span class="label">Блог</span>
-              </button>
-
-              <button type="button" class="hotspot prop prop-box" data-hot="shop" aria-label="Магазин">
-                <div class="solid crate-box" aria-hidden="true">
-                  <span class="ft"><i></i></span>
-                  <span class="sd"></span>
-                  <span class="tp"></span>
-                </div>
-                <span class="label">Магазин</span>
               </button>
 
               <button type="button" class="hotspot prop fridge prop-fridge" data-hot="shop" aria-label="Холодильник" data-deco="fridge">
@@ -255,34 +189,27 @@
                 </div>
               </button>
 
-              <button type="button" id="hot-tv" class="hotspot prop tv locked prop-tv" data-hot="tv" aria-label="Телевизор">
+              <button type="button" id="hot-tv" class="hotspot prop tv locked prop-tv" data-hot="tv" aria-label="Отдыхать">
+                <div class="tv-cabinet solid" aria-hidden="true">
+                  <span class="ft"><i></i><i></i></span>
+                  <span class="sd"></span>
+                  <span class="tp"></span>
+                </div>
                 <div class="tv-3d" aria-hidden="true">
                   <span class="ant l"></span>
                   <span class="ant r"></span>
                   <div class="solid tv-box">
                     <span class="ft">
-                      <span class="tv-bezel">
-                        <em class="tv-screen"></em>
-                      </span>
-                      <b class="knobs"><i></i><i></i><i></i></b>
+                      <span class="tv-bezel"><em class="tv-screen"></em></span>
                     </span>
-                    <span class="sd"></span>
+                    <span class="sd"><span class="stamp">Отдыхать</span></span>
                     <span class="lt"></span>
                     <span class="bk"></span>
                     <span class="tp"></span>
                   </div>
-                  <div class="solid tv-stand">
-                    <span class="ft"></span>
-                    <span class="sd"></span>
-                    <span class="tp"></span>
-                  </div>
-                  <span class="tv-leg l"></span>
-                  <span class="tv-leg r"></span>
                 </div>
                 <span id="tv-badge" class="badge hidden">+200</span>
-                <span class="label">ТВ</span>
               </button>
-
             </div>
           </div>
         </div>
@@ -381,7 +308,7 @@
           <div class="big-emoji">👋</div>
           <h2>Привет, Человек-паук!</h2>
           <p class="lead">Нажимай на предметы в комнате.</p>
-          <p class="card-sub">Ноутбук — фото. Окно — спасать город. Кнопка ₽ — костюмы за рубли. Купленный костюм надевается сам.</p>
+          <p class="card-sub">Работать — фото. Спасать — миссии. Костюм, магазин, отдыхать и достижения — прямо на предметах в комнате. Кнопка ₽ — костюмы за рубли.</p>
           <button type="button" id="tut-ok" class="btn btn-red btn-xl">Понятно!</button>
         </div>
       </div>
