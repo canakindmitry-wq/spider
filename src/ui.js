@@ -114,15 +114,21 @@ function afterCoins(unlocked) {
 export function renderRoom() {
   const pal = palette()
   const rain = Boolean(equippedSkinData()?.rainbow)
-  $('hanger-suit').innerHTML = spiderSVG(pal, {
-    rainbow: rain,
-    torn: state.costumeLevel === 1 && !state.equippedSkin,
-  })
+  const hanger = $('hanger-suit')
+  if (hanger) {
+    hanger.innerHTML = spiderSVG(pal, {
+      rainbow: rain,
+      torn: state.costumeLevel === 1 && !state.equippedSkin,
+    })
+  }
   const winSpidey = $('window-spidey')
   if (winSpidey) winSpidey.innerHTML = spiderSVG(pal, { rainbow: rain })
-  $('hanger-name').textContent = state.equippedSkin
-    ? getSkinById(state.equippedSkin)?.name || costume().name
-    : costume().name
+  const hangerName = $('hanger-name')
+  if (hangerName) {
+    hangerName.textContent = state.equippedSkin
+      ? getSkinById(state.equippedSkin)?.name || costume().name
+      : costume().name
+  }
 
   for (const item of ROOM_ITEMS) {
     document.querySelectorAll(`[data-deco="${item.id}"]`).forEach((el) => {
@@ -136,66 +142,26 @@ export function renderRoom() {
   const chartObj = $('chart-obj')
   if (chartObj) chartObj.classList.toggle('upgraded', hasItem('laptop'))
 
-  $('wall-frames').innerHTML = state.hangingPhotos
-    .map((id, i) => {
-      const p = PHOTOS.find((x) => x.id === id)
-      if (!p) {
-        return `<div class="frame empty" data-slot="${i}" aria-hidden="true">+</div>`
-      }
-      return `<div class="frame filled" data-slot="${i}" aria-label="${p.name}"><span>${p.emoji}</span></div>`
-    })
-    .join('')
+  const frames = $('wall-frames')
+  if (frames) {
+    frames.innerHTML = state.hangingPhotos
+      .map((id, i) => {
+        const p = PHOTOS.find((x) => x.id === id)
+        if (!p) {
+          return `<div class="frame empty" data-slot="${i}" aria-hidden="true">+</div>`
+        }
+        return `<div class="frame filled" data-slot="${i}" aria-label="${p.name}"><span>${p.emoji}</span></div>`
+      })
+      .join('')
+  }
 
   $('cam-level-pip').textContent = `ур. ${state.cameraLevel}`
   $('costume-level-pip').textContent = `ур. ${state.costumeLevel}`
   $('passive-level-pip').textContent = `ур. ${state.passiveLevel}`
-
-  requestAnimationFrame(() => requestAnimationFrame(fitIsoRoom))
 }
 
 export function fitIsoRoom() {
-  const room = $('room')
-  const iso = room?.querySelector('.room-3d')
-  if (!room || !iso) return
-  const w = room.clientWidth
-  const h = room.clientHeight
-  if (w < 40 || h < 40) return
-
-  iso.style.setProperty('--iso-scale', '1')
-  iso.style.setProperty('--iso-x', '0px')
-  iso.style.setProperty('--iso-y', '0px')
-  void iso.offsetWidth
-
-  const union = (root) => {
-    const faces = root.querySelectorAll('.face-floor, .face-left, .face-back')
-    let minX = Infinity
-    let minY = Infinity
-    let maxX = -Infinity
-    let maxY = -Infinity
-    faces.forEach((f) => {
-      if (f.matches('.fridge:not(.on), .plant:not(.on)')) return
-      const r = f.getBoundingClientRect()
-      minX = Math.min(minX, r.left)
-      minY = Math.min(minY, r.top)
-      maxX = Math.max(maxX, r.right)
-      maxY = Math.max(maxY, r.bottom)
-    })
-    return { minX, minY, maxX, maxY, w: maxX - minX, h: maxY - minY }
-  }
-
-  const box = union(iso)
-  const wide = w >= 800
-  const cap = wide ? 3.2 : 1.45
-  const scale = Math.min((w * (wide ? 1.08 : 0.92)) / Math.max(box.w, 1), (h * (wide ? 1.12 : 0.86)) / Math.max(box.h, 1), cap)
-  iso.style.setProperty('--iso-scale', String(Math.max(0.55, Math.round(scale * 1000) / 1000)))
-  void iso.offsetWidth
-
-  const fitted = union(iso)
-  const roomBox = room.getBoundingClientRect()
-  const dx = roomBox.left + roomBox.width / 2 - (fitted.minX + fitted.maxX) / 2
-  const dy = roomBox.top + roomBox.height * (w >= 800 ? 0.5 : 0.54) - (fitted.minY + fitted.maxY) / 2
-  iso.style.setProperty('--iso-x', `${Math.round(dx)}px`)
-  iso.style.setProperty('--iso-y', `${Math.round(dy)}px`)
+  /* Кадр масштабируется CSS (object-fit / container query). */
 }
 
 function openModal(title, html, { wide = false } = {}) {
