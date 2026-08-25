@@ -158,10 +158,26 @@ export function renderRoom() {
   $('cam-level-pip').textContent = `ур. ${state.cameraLevel}`
   $('costume-level-pip').textContent = `ур. ${state.costumeLevel}`
   $('passive-level-pip').textContent = `ур. ${state.passiveLevel}`
+
+  requestAnimationFrame(() => requestAnimationFrame(fitIsoRoom))
 }
 
 export function fitIsoRoom() {
-  /* Кадр масштабируется CSS (object-fit / container query). */
+  const room = $('room')
+  const hub = room?.querySelector('.hub')
+  if (!room || !hub) return
+  const rw = room.clientWidth
+  const rh = room.clientHeight
+  if (rw < 40 || rh < 40) return
+  const ar = 4093 / 2286
+  let w = rw
+  let h = w / ar
+  if (h > rh) {
+    h = rh
+    w = h * ar
+  }
+  hub.style.width = `${Math.round(w)}px`
+  hub.style.height = `${Math.round(h)}px`
 }
 
 function openModal(title, html, { wide = false } = {}) {
