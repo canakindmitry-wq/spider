@@ -73,12 +73,18 @@
   z-index: 12;
 }
 
-.hot-pop {
+.hot-sprite {
   position: absolute;
-  inset: 0;
-  overflow: hidden;
+  left: calc((var(--sx) - var(--hx)) / var(--hw) * 100%);
+  top: calc((var(--sy) - var(--hy)) / var(--hh) * 100%);
+  width: calc(var(--sw) / var(--hw) * 100%);
+  height: calc(var(--sh) / var(--hh) * 100%);
+  max-width: none;
+  object-fit: fill;
   pointer-events: none;
-  transform-origin: 50% 50%;
+  user-select: none;
+  -webkit-user-drag: none;
+  transform-origin: 50% 82%;
   opacity: 0;
   transition:
     transform 0.22s cubic-bezier(0.22, 1, 0.32, 1),
@@ -86,24 +92,11 @@
   z-index: 1;
 }
 
-.hot-pop img {
-  position: absolute;
-  left: calc(var(--hx) / var(--hw) * -100%);
-  top: calc(var(--hy) / var(--hh) * -100%);
-  width: calc(100% * 100 / var(--hw));
-  height: calc(100% * 100 / var(--hh));
-  max-width: none;
-  object-fit: fill;
-  pointer-events: none;
-  user-select: none;
-  -webkit-user-drag: none;
-}
-
-.hotspot:hover .hot-pop,
-.hotspot:focus-visible .hot-pop,
-.hotspot:active .hot-pop {
+.hotspot:hover .hot-sprite,
+.hotspot:focus-visible .hot-sprite,
+.hotspot:active .hot-sprite {
   opacity: 1;
-  transform: scale(1.1);
+  transform: scale(1.12);
 }
 
 .hot-label {
@@ -166,6 +159,12 @@
   transform: translate(-50%, 0);
 }
 
+.hit-photos .hot-sprite,
+.hit-achievements .hot-sprite,
+.hit-hero .hot-sprite {
+  transform-origin: 50% 50%;
+}
+
 .hit-fridge:hover,
 .hit-fridge:focus-visible,
 .hit-fridge:active,
@@ -177,16 +176,16 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hot-pop,
+  .hot-sprite,
   .hot-label,
   .hit-fridge,
   .hit-plant {
     transition: none;
   }
 
-  .hotspot:hover .hot-pop,
-  .hotspot:focus-visible .hot-pop,
-  .hotspot:active .hot-pop,
+  .hotspot:hover .hot-sprite,
+  .hotspot:focus-visible .hot-sprite,
+  .hotspot:active .hot-sprite,
   .hit-fridge:hover,
   .hit-plant:hover {
     transform: none;
@@ -227,9 +226,13 @@
   --hy: 38;
   --hw: 12.5;
   --hh: 24;
+  --sx: 16.369;
+  --sy: 21.96;
+  --sw: 20.621;
+  --sh: 44.838;
 }
 
-.hit-tv.locked .hot-pop {
+.hit-tv.locked .hot-sprite {
   filter: grayscale(0.25) brightness(0.85);
 }
 
@@ -238,6 +241,10 @@
   --hy: 16;
   --hw: 13.5;
   --hh: 42;
+  --sx: 33.496;
+  --sy: 15.092;
+  --sw: 19.301;
+  --sh: 43.701;
 }
 
 .hit-photos {
@@ -245,6 +252,10 @@
   --hy: 18;
   --hw: 6;
   --hh: 13;
+  --sx: 50.794;
+  --sy: 18.154;
+  --sw: 6.401;
+  --sh: 14.611;
 }
 
 .hit-achievements {
@@ -252,6 +263,10 @@
   --hy: 18;
   --hw: 9;
   --hh: 14;
+  --sx: 55.485;
+  --sy: 15.136;
+  --sw: 11.312;
+  --sh: 18.635;
 }
 
 .hit-hero {
@@ -259,6 +274,10 @@
   --hy: 25;
   --hw: 12;
   --hh: 22;
+  --sx: 63.792;
+  --sy: 14.217;
+  --sw: 21.671;
+  --sh: 35.783;
 }
 
 .hit-photo {
@@ -266,6 +285,10 @@
   --hy: 45;
   --hw: 10;
   --hh: 14;
+  --sx: 57.488;
+  --sy: 36.789;
+  --sw: 10.701;
+  --sh: 17.673;
 }
 
 .hit-shop {
@@ -273,6 +296,10 @@
   --hy: 62;
   --hw: 11;
   --hh: 14;
+  --sx: 42.78;
+  --sy: 54.768;
+  --sw: 12.998;
+  --sh: 22.703;
 }
 
 .hit-camera {
@@ -280,6 +307,10 @@
   --hy: 56;
   --hw: 7;
   --hh: 7;
+  --sx: 62.79;
+  --sy: 46.457;
+  --sw: 12.998;
+  --sh: 19.86;
   z-index: 3;
 }
 
@@ -288,6 +319,10 @@
   --hy: 54;
   --hw: 6;
   --hh: 12;
+  --sx: 51.796;
+  --sy: 52.8;
+  --sw: 9.993;
+  --sh: 19.379;
   z-index: 3;
 }
 
