@@ -17,6 +17,7 @@
   width: min(100cqw, calc(100cqh * 4093 / 2286));
   height: min(100cqh, calc(100cqw * 2286 / 4093));
   flex-shrink: 0;
+  overflow: visible;
 }
 
 .hub-art {
@@ -31,7 +32,15 @@
 }
 
 .hotspot {
+  --hx: 0;
+  --hy: 0;
+  --hw: 10;
+  --hh: 10;
   position: absolute;
+  left: calc(var(--hx) * 1%);
+  top: calc(var(--hy) * 1%);
+  width: calc(var(--hw) * 1%);
+  height: calc(var(--hh) * 1%);
   border: none;
   background: transparent;
   color: inherit;
@@ -45,6 +54,7 @@
   min-height: 0;
   z-index: 2;
   touch-action: manipulation;
+  overflow: visible;
 }
 
 .hotspot:hover,
@@ -54,7 +64,128 @@
   background: transparent;
   outline: none;
   box-shadow: none;
-  filter: none;
+}
+
+.hotspot:hover,
+.hotspot:focus-visible,
+.hotspot:active {
+  z-index: 12;
+}
+
+.hot-pop {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.32, 1);
+  z-index: 1;
+}
+
+.hot-pop img {
+  position: absolute;
+  left: calc(var(--hx) / var(--hw) * -100%);
+  top: calc(var(--hy) / var(--hh) * -100%);
+  width: calc(100% * 100 / var(--hw));
+  height: calc(100% * 100 / var(--hh));
+  max-width: none;
+  object-fit: fill;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.hotspot:hover .hot-pop,
+.hotspot:focus-visible .hot-pop,
+.hotspot:active .hot-pop {
+  transform: scale(1.1);
+}
+
+.hot-label {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  transform: translate(-50%, 6px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 8;
+  white-space: nowrap;
+  background: #fff8ee;
+  color: var(--ink, #3a2a1c);
+  font-size: 14px;
+  font-weight: 900;
+  padding: 5px 10px;
+  border-radius: 999px;
+  box-shadow: 0 3px 0 #c4a574;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s cubic-bezier(0.22, 1, 0.32, 1);
+}
+
+.hotspot:hover .hot-label,
+.hotspot:focus-visible .hot-label,
+.hotspot:active .hot-label {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.hit-costume .hot-label {
+  bottom: calc(100% + 8px);
+  top: auto;
+  transform: translate(-50%, 6px);
+}
+
+.hit-photos .hot-label,
+.hit-achievements .hot-label,
+.hit-hero .hot-label {
+  bottom: auto;
+  top: calc(100% + 8px);
+  transform: translate(-50%, -6px);
+}
+
+.hit-costume:hover .hot-label,
+.hit-costume:focus-visible .hot-label,
+.hit-costume:active .hot-label {
+  transform: translate(-50%, 0);
+}
+
+.hit-photos:hover .hot-label,
+.hit-photos:focus-visible .hot-label,
+.hit-photos:active .hot-label,
+.hit-achievements:hover .hot-label,
+.hit-achievements:focus-visible .hot-label,
+.hit-achievements:active .hot-label,
+.hit-hero:hover .hot-label,
+.hit-hero:focus-visible .hot-label,
+.hit-hero:active .hot-label {
+  transform: translate(-50%, 0);
+}
+
+.hit-fridge:hover,
+.hit-fridge:focus-visible,
+.hit-fridge:active,
+.hit-plant:hover,
+.hit-plant:focus-visible,
+.hit-plant:active {
+  transform: scale(1.08);
+  transform-origin: 50% 80%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hot-pop,
+  .hot-label,
+  .hit-fridge,
+  .hit-plant {
+    transition: none;
+  }
+
+  .hotspot:hover .hot-pop,
+  .hotspot:focus-visible .hot-pop,
+  .hotspot:active .hot-pop,
+  .hit-fridge:hover,
+  .hit-plant:hover {
+    transform: none;
+  }
 }
 
 .pip {
@@ -87,81 +218,85 @@
 
 /* Зоны по макету, % от кадра */
 .hit-tv {
-  left: 25.5%;
-  top: 38%;
-  width: 12.5%;
-  height: 24%;
+  --hx: 25.5;
+  --hy: 38;
+  --hw: 12.5;
+  --hh: 24;
 }
 
-.hit-tv.locked {
-  filter: grayscale(0.35) brightness(0.72);
+.hit-tv.locked .hot-pop {
+  filter: grayscale(0.4) brightness(0.78);
 }
 
 .hit-tv.locked::after {
-  content: "";
-  position: absolute;
-  inset: 12% 18% 28% 22%;
-  background: rgba(20, 24, 32, 0.45);
-  border-radius: 8px;
-  pointer-events: none;
+  display: none;
 }
 
 .hit-costume {
-  left: 39%;
-  top: 16%;
-  width: 13.5%;
-  height: 42%;
+  --hx: 39;
+  --hy: 16;
+  --hw: 13.5;
+  --hh: 42;
 }
 
 .hit-photos {
-  left: 50.5%;
-  top: 18%;
-  width: 6%;
-  height: 13%;
+  --hx: 50.5;
+  --hy: 18;
+  --hw: 6;
+  --hh: 13;
 }
 
 .hit-achievements {
-  left: 57%;
-  top: 18%;
-  width: 9%;
-  height: 14%;
+  --hx: 57;
+  --hy: 18;
+  --hw: 9;
+  --hh: 14;
 }
 
 .hit-hero {
-  left: 63%;
-  top: 25%;
-  width: 12%;
-  height: 22%;
+  --hx: 63;
+  --hy: 25;
+  --hw: 12;
+  --hh: 22;
 }
 
 .hit-photo {
-  left: 60%;
-  top: 45%;
-  width: 10%;
-  height: 14%;
+  --hx: 60;
+  --hy: 45;
+  --hw: 10;
+  --hh: 14;
 }
 
 .hit-shop {
-  left: 44%;
-  top: 62%;
-  width: 11%;
-  height: 14%;
+  --hx: 44;
+  --hy: 62;
+  --hw: 11;
+  --hh: 14;
 }
 
 .hit-camera {
-  left: 64%;
-  top: 56%;
-  width: 7%;
-  height: 7%;
+  --hx: 64;
+  --hy: 56;
+  --hw: 7;
+  --hh: 7;
   z-index: 3;
 }
 
 .hit-blog {
-  left: 56%;
-  top: 54%;
-  width: 6%;
-  height: 12%;
+  --hx: 56;
+  --hy: 54;
+  --hw: 6;
+  --hh: 12;
   z-index: 3;
+}
+
+.hit-camera:hover,
+.hit-camera:focus-visible,
+.hit-camera:active,
+.hit-blog:hover,
+.hit-blog:focus-visible,
+.hit-blog:active {
+  z-index: 13;
 }
 
 .fridge,
@@ -176,13 +311,14 @@
 }
 
 .hit-fridge {
-  left: 10%;
-  top: 58%;
-  width: 8%;
-  height: 16%;
+  --hx: 10;
+  --hy: 58;
+  --hw: 8;
+  --hh: 16;
   background: linear-gradient(#f8fafc, #cbd5e1);
   border-radius: 6px 6px 4px 4px;
   box-shadow: 3px 6px 0 rgba(40, 30, 20, 0.18);
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.32, 1);
 }
 
 .hit-fridge.on {
@@ -190,10 +326,11 @@
 }
 
 .hit-plant {
-  left: 78%;
-  top: 68%;
-  width: 7%;
-  height: 14%;
+  --hx: 78;
+  --hy: 68;
+  --hw: 7;
+  --hh: 14;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.32, 1);
 }
 
 .hit-plant.on {
